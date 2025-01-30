@@ -9,10 +9,11 @@ public class EndsWithXXXComparator implements Comparator<String> {
         boolean s2EndsWithXXX = s2.endsWith("XXX");
 
         if (s1EndsWithXXX && !s2EndsWithXXX) {
-            return 1;
-        } else if (!s1EndsWithXXX && s2EndsWithXXX) {
             return -1;
+        } else if (!s1EndsWithXXX && s2EndsWithXXX) {
+            return 1;
         } else {
             return s1.compareTo(s2);
-        }    }
+        }
+    }
 }
