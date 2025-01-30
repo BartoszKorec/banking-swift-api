@@ -27,9 +27,4 @@ public class HeadquarterDTO {
         this.countryName = countryName;
         this.swiftCode = swiftCode;
     }
-
-    // some building problems with getBranches
-    public Set<BranchDTO> getBranches() {
-        return branches;
-    }
 }
