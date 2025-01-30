@@ -24,7 +24,7 @@ public class Branch {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "hq_swift_code", nullable = false)
-    private com.bartoszkorec.banking_swift_service.entity.Headquarter hqSwiftCode;
+    private com.bartoszkorec.banking_swift_service.entity.Headquarter headquarter;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)

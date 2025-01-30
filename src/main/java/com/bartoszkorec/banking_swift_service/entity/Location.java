@@ -28,7 +28,7 @@ public class Location {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "iso2_code", nullable = false)
-    private Country iso2Code;
+    private Country country;
 
     @OneToMany(mappedBy = "location")
     private Set<Branch> branches = new LinkedHashSet<>();

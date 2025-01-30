@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -29,6 +29,6 @@ public class Headquarter {
     private com.bartoszkorec.banking_swift_service.entity.Location location;
 
     @OneToMany(mappedBy = "hqSwiftCode")
-    private Set<Branch> branches = new LinkedHashSet<>();
+    private Set<Branch> branches = new HashSet<>();
 
 }

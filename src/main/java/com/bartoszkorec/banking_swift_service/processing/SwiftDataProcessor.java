@@ -1,9 +1,8 @@
 package com.bartoszkorec.banking_swift_service.processing;
 
-import com.bartoszkorec.banking_swift_service.dto.BranchDTO;
-import com.bartoszkorec.banking_swift_service.dto.HeadquarterDTO;
+import com.bartoszkorec.banking_swift_service.dto.api.BranchDTO;
+import com.bartoszkorec.banking_swift_service.dto.api.HeadquarterDTO;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,7 +22,8 @@ public class SwiftDataProcessor {
         Comparator<String> comparator = new EndsWithXXXComparator();
         int[] lineCounter = {2};
 
-        lines.map(line -> line + "\t" + lineCounter[0]++)
+        lines.skip(1)
+                .map(line -> line + "\t" + lineCounter[0]++)
                 .map(line -> line.split("\t"))
                 .sorted((arr1, arr2) -> comparator.compare(arr1[1], arr2[1]))
                 .forEach(this::parseLine);
