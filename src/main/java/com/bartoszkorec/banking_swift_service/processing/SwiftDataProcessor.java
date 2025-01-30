@@ -12,7 +12,7 @@ import java.util.stream.Stream;
 
 @Getter
 @Service
-@Slf4j
+//@Slf4j
 public class SwiftDataProcessor {
 
     private final Map<String, HeadquarterDTO> headquarters = new HashMap<>();
@@ -39,7 +39,7 @@ public class SwiftDataProcessor {
 
         List<String> missingFields = validateRequiredFields(iso2code, swiftCode, name, address, countryName);
         if (!missingFields.isEmpty()) {
-            log.warn("Line {}: Invalid data - missing fields: {}", lineNumber, String.join(", ", missingFields));
+//            log.warn("Line {}: Invalid data - missing fields: {}", lineNumber, String.join(", ", missingFields));
             return;
         }
 
@@ -52,7 +52,7 @@ public class SwiftDataProcessor {
 
     private void processHeadquarter(String iso2code, String swiftCode, String name, String address, String countryName, String lineNumber) {
         if (headquarters.containsKey(swiftCode)) {
-            log.warn("Line {}: Duplicate headquarter found with Swift code: {}", lineNumber, swiftCode);
+//            log.warn("Line {}: Duplicate headquarter found with Swift code: {}", lineNumber, swiftCode);
             return;
         }
         String swiftPrefix = swiftCode.substring(0, 8);
@@ -68,7 +68,7 @@ public class SwiftDataProcessor {
     private void processBranch(String iso2code, String swiftCode, String name, String address, String countryName, String lineNumber) {
 
         if (branches.containsKey(swiftCode)) {
-            log.warn("Line {}: Duplicate branch found with Swift code: {}", lineNumber, swiftCode);
+//            log.warn("Line {}: Duplicate branch found with Swift code: {}", lineNumber, swiftCode);
             return;
         }
         branches.put(swiftCode, new BranchDTO(address, name, iso2code, countryName, swiftCode));
