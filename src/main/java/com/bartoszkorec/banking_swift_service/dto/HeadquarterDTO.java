@@ -1,12 +1,15 @@
 package com.bartoszkorec.banking_swift_service.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class HeadquarterDTO {
 
     private String address;
@@ -15,5 +18,13 @@ public class HeadquarterDTO {
     private String countryName;
     private boolean isHeadquarter = true;
     private String swiftCode;
-    private Set<BranchDTO> branches;
+    private Set<BranchDTO> branches = new HashSet<>();
+
+    public HeadquarterDTO(String address, String bankName, String countryISO2, String countryName, String swiftCode) {
+        this.address = address;
+        this.bankName = bankName;
+        this.countryISO2 = countryISO2;
+        this.countryName = countryName;
+        this.swiftCode = swiftCode;
+    }
 }
