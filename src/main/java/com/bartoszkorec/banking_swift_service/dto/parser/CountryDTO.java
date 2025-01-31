@@ -11,6 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CountryDTO {
 
-    private String iso2code;
+    private String iso2Code;
     private String countryName;
 }
