@@ -15,16 +15,16 @@ public class SwiftFileProcessorServiceImpl implements SwiftFileProcessorService 
 
     private final AppConfig appConfig;
     private final BranchService branchService;
-    private final HeadquarterService headquarterService;
+    private final HeadquartersService headquartersService;
     private final LocationService locationService;
     private final CountryService countryService;
     private final SwiftDataProcessor processor;
 
     @Autowired
-    public SwiftFileProcessorServiceImpl(AppConfig appConfig, BranchService branchService, HeadquarterService headquarterService, LocationService locationService, CountryService countryService, SwiftDataProcessor processor) {
+    public SwiftFileProcessorServiceImpl(AppConfig appConfig, BranchService branchService, HeadquartersService headquartersService, LocationService locationService, CountryService countryService, SwiftDataProcessor processor) {
         this.appConfig = appConfig;
         this.branchService = branchService;
-        this.headquarterService = headquarterService;
+        this.headquartersService = headquartersService;
         this.locationService = locationService;
         this.countryService = countryService;
         this.processor = processor;
@@ -41,7 +41,7 @@ public class SwiftFileProcessorServiceImpl implements SwiftFileProcessorService 
 
         processor.getCountries().values().forEach(countryService::processCountry);
         processor.getLocations().values().forEach(locationService::processLocation);
-        processor.getHeadquarters().values().forEach(headquarterService::processHeadquarter);
+        processor.getHeadquarters().values().forEach(headquartersService::processHeadquarters);
         processor.getBranches().values().forEach(branchService::processBranch);
     }
 }

@@ -10,17 +10,17 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class HeadquarterDTO {
+public class HeadquartersDTO {
 
     private String address;
     private String bankName;
     private String countryISO2;
     private String countryName;
-    private boolean isHeadquarter = true;
+    private boolean isHeadquarters = true;
     private String swiftCode;
     private Set<BranchDTO> branches = new HashSet<>();
 
-    public HeadquarterDTO(String address, String bankName, String countryISO2, String countryName, String swiftCode) {
+    public HeadquartersDTO(String address, String bankName, String countryISO2, String countryName, String swiftCode) {
         this.address = address;
         this.bankName = bankName;
         this.countryISO2 = countryISO2;

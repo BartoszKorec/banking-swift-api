@@ -33,6 +33,6 @@ public class Location {
     private Set<Branch> branches = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "location")
-    private Set<Headquarter> headquarters = new LinkedHashSet<>();
+    private Set<Headquarters> headquarters = new LinkedHashSet<>();
 
 }

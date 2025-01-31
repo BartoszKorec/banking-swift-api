@@ -13,8 +13,8 @@ public interface BranchMapper {
     @Mapping(source = "location.addressLine", target = "address")
     @Mapping(source = "location.country.countryName", target = "countryName")
     @Mapping(source = "location.country.iso2Code", target = "countryISO2")
-    @Mapping(target = "headquarter", expression = "java(false)")
-        // I dunno why not isHeadquarter :/
+    @Mapping(target = "headquarters", expression = "java(false)")
+        // I dunno why not isHeadquarters :/
     BranchDTO toDTO(Branch branch);
 
     @Mapping(source = "address", target = "location.addressLine")
@@ -22,6 +22,6 @@ public interface BranchMapper {
     @Mapping(source = "countryISO2", target = "location.country.iso2Code")
     @Mapping(source = "countryName", target = "location.country.countryName")
     @Mapping(source = "swiftCode", target = "swiftCode")
-    @Mapping(target = "headquarter", expression = "java(new com.bartoszkorec.banking_swift_service.entity.Headquarter())")
+    @Mapping(target = "headquarters", expression = "java(new com.bartoszkorec.banking_swift_service.entity.Headquarters())")
     Branch toEntity(BranchDTO branchDTO);
 }

@@ -15,7 +15,7 @@ import java.util.Set;
 @Table(name = "headquarters", schema = "public", indexes = {
         @Index(name = "idx_headquarters_locations", columnList = "location_id")
 })
-public class Headquarter {
+public class Headquarters {
     @Id
     @Column(name = "swift_code", nullable = false, length = 11)
     private String swiftCode;

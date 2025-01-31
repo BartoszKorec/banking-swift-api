@@ -3,7 +3,7 @@ package com.bartoszkorec.banking_swift_service.processing;
 
 import com.bartoszkorec.banking_swift_service.entity.Branch;
 import com.bartoszkorec.banking_swift_service.entity.Country;
-import com.bartoszkorec.banking_swift_service.entity.Headquarter;
+import com.bartoszkorec.banking_swift_service.entity.Headquarters;
 import com.bartoszkorec.banking_swift_service.entity.Location;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ public class SwiftDataProcessor {
 
     private final Map<String, Country> countries = new HashMap<>();
     private final Map<String, Location> locations = new HashMap<>();
-    private final Map<String, Headquarter> headquarters = new HashMap<>();
+    private final Map<String, Headquarters> headquarters = new HashMap<>();
     private final Map<String, Branch> branches = new HashMap<>();
 
     public void processLines(Stream<String> lines) {
@@ -58,31 +58,31 @@ public class SwiftDataProcessor {
         }
 
         if (swiftCode.endsWith("XXX")) {
-            processHeadquarter(iso2code, swiftCode, name, address, countryName, lineNumber);
+            processHeadquarters(iso2code, swiftCode, name, address, countryName, lineNumber);
         } else {
             processBranch(iso2code, swiftCode, name, address, countryName, lineNumber);
         }
     }
 
-    private void processHeadquarter(String iso2code, String swiftCode, String name, String address, String countryName, String lineNumber) {
-        if (headquarters.containsKey(swiftCode)) {
-//            log.warn("Line {}: Duplicate headquarter found with Swift code: {}", lineNumber, swiftCode);
+    private void processHeadquarters(String iso2code, String swiftCode, String name, String address, String countryName, String lineNumber) {
+        if (this.headquarters.containsKey(swiftCode)) {
+//            log.warn("Line {}: Duplicate headquarters found with Swift code: {}", lineNumber, swiftCode);
             return;
         }
         Location location = findOrCreateLocation(iso2code, address, countryName);
-        Headquarter headquarter = new Headquarter();
-        headquarter.setLocation(location);
-        headquarter.setSwiftCode(swiftCode);
-        headquarter.setName(name);
-        headquarters.put(swiftCode, headquarter);
+        Headquarters headquarters = new Headquarters();
+        headquarters.setLocation(location);
+        headquarters.setSwiftCode(swiftCode);
+        headquarters.setName(name);
+        this.headquarters.put(swiftCode, headquarters);
     }
 
     private void processBranch(String iso2code, String swiftCode, String name, String address, String countryName, String lineNumber) {
-        String headquarterSwiftCode = swiftCode.substring(0, 8) + "XXX";
-        Headquarter headquarter = headquarters.get(headquarterSwiftCode);
+        String headquartersSwiftCode = swiftCode.substring(0, 8) + "XXX";
+        Headquarters headquarters = this.headquarters.get(headquartersSwiftCode);
 
-        if (headquarter == null) {
-//            log.warn("Line {}: No matching headquarter found for branch with Swift code: {}", lineNumber, swiftCode);
+        if (headquarters == null) {
+//            log.warn("Line {}: No matching headquarters found for branch with Swift code: {}", lineNumber, swiftCode);
             return;
         }
 
@@ -95,7 +95,7 @@ public class SwiftDataProcessor {
         Branch branch = new Branch();
         branch.setSwiftCode(swiftCode);
         branch.setName(name);
-        branch.setHeadquarter(headquarter);
+        branch.setHeadquarters(headquarters);
         branch.setLocation(location);
         branches.put(swiftCode, branch);
     }

@@ -13,7 +13,7 @@ public class BranchDTO {
     private String bankName;
     private String countryISO2;
     private String countryName;
-    private boolean isHeadquarter = false;
+    private boolean isHeadquarters = false;
     private String swiftCode;
 
     public BranchDTO(String address, String bankName, String countryISO2, String countryName, String swiftCode) {
