@@ -1,4 +1,4 @@
-package com.bartoszkorec.banking_swift_service.dto.api;
+package com.bartoszkorec.banking_swift_service.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

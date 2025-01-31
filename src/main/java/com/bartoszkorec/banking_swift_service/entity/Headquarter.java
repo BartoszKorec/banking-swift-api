@@ -28,7 +28,7 @@ public class Headquarter {
     @JoinColumn(name = "location_id", nullable = false)
     private com.bartoszkorec.banking_swift_service.entity.Location location;
 
-    @OneToMany(mappedBy = "hqSwiftCode")
+    @OneToMany(mappedBy = "headquarter")
     private Set<Branch> branches = new HashSet<>();
 
 }
