@@ -1,17 +1,18 @@
 package com.bartoszkorec.banking_swift_service.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "locations", schema = "public", indexes = {
         @Index(name = "idx_locations_countries", columnList = "iso2_code")
 })
@@ -29,10 +30,9 @@ public class Location {
     @JoinColumn(name = "iso2_code", nullable = false)
     private Country country;
 
-    @OneToMany(mappedBy = "location")
-    private Set<Branch> branches = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "location")
-    private Set<Headquarters> headquarters = new LinkedHashSet<>();
-
+//    @OneToMany(mappedBy = "location")
+//    private Set<Branch> branches = new LinkedHashSet<>();
+//
+//    @OneToMany(mappedBy = "location")
+//    private Set<Headquarters> headquarters = new LinkedHashSet<>();
 }

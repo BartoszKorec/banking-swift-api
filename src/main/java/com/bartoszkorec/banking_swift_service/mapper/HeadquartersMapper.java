@@ -23,6 +23,6 @@ public interface HeadquartersMapper {
     @Mapping(source = "countryISO2", target = "location.country.iso2Code")
     @Mapping(source = "countryName", target = "location.country.countryName")
     @Mapping(source = "swiftCode", target = "swiftCode")
-    @Mapping(target = "branches", expression = "java(new java.util.HashSet<>())")
+//    @Mapping(target = "branches", expression = "java(new java.util.HashSet<>())")
     Headquarters toEntity(HeadquartersDTO headquartersDTO);
 }

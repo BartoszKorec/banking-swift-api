@@ -18,7 +18,7 @@ public class HeadquartersDTO {
     private String countryName;
     private boolean isHeadquarters = true;
     private String swiftCode;
-    private Set<BranchDTO> branches = new HashSet<>();
+    private Set<BranchDTO> branches;
 
     public HeadquartersDTO(String address, String bankName, String countryISO2, String countryName, String swiftCode) {
         this.address = address;
