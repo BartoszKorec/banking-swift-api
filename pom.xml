@@ -12,21 +12,35 @@
     <artifactId>banking-swift-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>banking-swift-service</name>
-    <description>Spring Boot REST API for managing and retrieving SWIFT codes stored in a PostgresSQL database
-    </description>
-    <url/>
+    <description>Spring Boot REST API for managing and retrieving SWIFT codes stored in a PostgresSQL database</description>
+    <url>https://github.com/BartoszKorec/banking-swift-api</url>
+
+    <!-- License Information -->
     <licenses>
-        <license/>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
     </licenses>
+
+    <!-- Developer Information -->
     <developers>
-        <developer/>
+        <developer>
+            <id>bartoszkorec</id>
+            <name>Bartosz Korec</name>
+            <email>bqorec@gmail.com</email>
+        </developer>
     </developers>
+
+    <!-- SCM Information -->
     <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
+        <connection>scm:git:git://github.com/BartoszKorec/banking-swift-api.git</connection>
+        <developerConnection>scm:git:ssh://github.com:BartoszKorec/banking-swift-api.git</developerConnection>
+        <url>https://github.com/BartoszKorec/banking-swift-api</url>
+        <tag>HEAD</tag>
     </scm>
+
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -39,7 +53,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.26.0</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -47,8 +66,18 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -110,35 +139,34 @@
                 </configuration>
             </plugin>
             <!-- mvn test will run only unit tests (files matching **/*Test.java)-->
-            <!-- mvn verify will run both unit tests and integration tests-->
-            <!-- mvn verify -DskipTests will run only integration tests (files matching **/*IT.java)-->
+            <!-- mvn failsafe:integration-test failsafe:verify will run only integration tests-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId> <!-- surefire plugin version managed by Spring Boot -->
+                <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
+                    <argLine>-XX:-UseSharedSpaces</argLine> <!-- Disables warning: Sharing is only supported for boot loader classes-->
+                    <excludes>
+                        <exclude>**/*IT.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId> <!-- failsafe plugin version managed by Spring Boot -->
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <argLine>-XX:-UseSharedSpaces</argLine> <!-- Disables warning: Sharing is only supported for boot loader classes-->
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>run-integration-tests</id>
-                        <phase>integration-test</phase>
                         <goals>
                             <goal>integration-test</goal>
                             <goal>verify</goal>
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <includes>
-                        <include>**/*IT.java</include>
-                    </includes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>

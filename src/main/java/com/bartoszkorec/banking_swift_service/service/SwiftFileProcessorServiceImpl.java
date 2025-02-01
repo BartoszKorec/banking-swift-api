@@ -2,7 +2,6 @@ package com.bartoszkorec.banking_swift_service.service;
 
 import com.bartoszkorec.banking_swift_service.processing.SwiftDataProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -13,8 +12,6 @@ import java.util.stream.Stream;
 @Service
 public class SwiftFileProcessorServiceImpl implements SwiftFileProcessorService {
 
-    @Value("${swift.file.path}")
-    private String filePath;
     private final BranchService branchService;
     private final HeadquartersService headquartersService;
     private final LocationService locationService;
@@ -31,9 +28,9 @@ public class SwiftFileProcessorServiceImpl implements SwiftFileProcessorService 
     }
 
     @Override
-    public void processSwiftFile() {
+    public void processSwiftFile(Path path) {
 
-        try (Stream<String> lines = Files.lines(Path.of(filePath))) {
+        try (Stream<String> lines = Files.lines(path)) {
             processor.processLines(lines);
         } catch (IOException e) {
             throw new RuntimeException(e);
