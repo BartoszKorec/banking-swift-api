@@ -1,6 +1,5 @@
 package com.bartoszkorec.banking_swift_service.processing;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,7 +8,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.not;
 
 @ExtendWith(SpringExtension.class)
 public class SwiftDataProcessorTest {

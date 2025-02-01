@@ -5,12 +5,13 @@ import com.bartoszkorec.banking_swift_service.entity.Country;
 import com.bartoszkorec.banking_swift_service.entity.Headquarters;
 import com.bartoszkorec.banking_swift_service.entity.Location;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Stream;
 
-//@Slf4j
+@Slf4j
 @Getter
 @Component
 public class SwiftDataProcessor {
@@ -24,6 +25,7 @@ public class SwiftDataProcessor {
         int[] lineCounter = {2};
 
         lines.map(line -> line + "\t" + lineCounter[0]++)
+                .skip(1)
                 .map(line -> line.split("\t"))
                 .sorted(Comparator.comparing(arr -> arr[1], this::compareSwiftCodes))
                 .forEach(this::processLine);
@@ -57,18 +59,17 @@ public class SwiftDataProcessor {
     private boolean validateFields(String iso2code, String swiftCode, String name, String address, String countryName, String lineNumber) {
         List<String> missingFields = checkBlankFields(iso2code, swiftCode, name, address, countryName);
         if (!missingFields.isEmpty()) {
-            System.err.println("Line " + lineNumber + ": Invalid data - missing fields: " + missingFields);
-            // log.warn("Line {}: Invalid data - missing fields: {}", lineNumber, String.join(", ", missingFields));
+             log.warn("Line {}: Invalid data - missing fields: {}", lineNumber, String.join(", ", missingFields));
             return false;
         }
 
         if (!validateIso2code(iso2code)) {
-            System.err.println("Line " + lineNumber + ": Invalid ISO2 code: " + iso2code);
+            log.warn("Line {}: Invalid ISO2 code: {}", lineNumber, iso2code);
             return false;
         }
 
         if (!validateSwiftCode(swiftCode)) {
-            System.err.println("Line " + lineNumber + ": Invalid SWIFT code: " + swiftCode);
+            log.warn("Line {}: Invalid SWIFT code: {}", lineNumber, swiftCode);
             return false;
         }
 
@@ -77,7 +78,7 @@ public class SwiftDataProcessor {
 
     private void processHeadquarters(String iso2code, String swiftCode, String name, String address, String countryName, String lineNumber) {
         if (headquarters.containsKey(swiftCode)) {
-            // log.warn("Line {}: Duplicate headquarters found with Swift code: {}", lineNumber, swiftCode);
+             log.warn("Line {}: Duplicate headquarters found with Swift code: {}", lineNumber, swiftCode);
             return;
         }
         headquarters.put(swiftCode, new Headquarters(swiftCode, name, findOrCreateLocation(iso2code, address, countryName)));
@@ -88,8 +89,7 @@ public class SwiftDataProcessor {
         Headquarters hq = headquarters.get(headquartersSwiftCode);
 
         if (hq == null || branches.containsKey(swiftCode)) {
-            // log.warn("Line {}: No matching headquarters found or duplicate branch with Swift code: {}", lineNumber, swiftCode);
-            System.err.println("Line " + lineNumber + ": No matching headquarters found or duplicate branch with Swift code: " + swiftCode);
+             log.warn("Line {}: No matching headquarters found or duplicate branch with Swift code: {}", lineNumber, swiftCode);
             return;
         }
 

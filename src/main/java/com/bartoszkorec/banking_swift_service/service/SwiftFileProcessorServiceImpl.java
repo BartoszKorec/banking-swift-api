@@ -1,19 +1,20 @@
 package com.bartoszkorec.banking_swift_service.service;
 
-import com.bartoszkorec.banking_swift_service.config.AppConfig;
 import com.bartoszkorec.banking_swift_service.processing.SwiftDataProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.stream.Stream;
 
 @Service
 public class SwiftFileProcessorServiceImpl implements SwiftFileProcessorService {
 
-    private final AppConfig appConfig;
+    @Value("${swift.file.path}")
+    private String filePath;
     private final BranchService branchService;
     private final HeadquartersService headquartersService;
     private final LocationService locationService;
@@ -21,8 +22,7 @@ public class SwiftFileProcessorServiceImpl implements SwiftFileProcessorService 
     private final SwiftDataProcessor processor;
 
     @Autowired
-    public SwiftFileProcessorServiceImpl(AppConfig appConfig, BranchService branchService, HeadquartersService headquartersService, LocationService locationService, CountryService countryService, SwiftDataProcessor processor) {
-        this.appConfig = appConfig;
+    public SwiftFileProcessorServiceImpl(BranchService branchService, HeadquartersService headquartersService, LocationService locationService, CountryService countryService, SwiftDataProcessor processor) {
         this.branchService = branchService;
         this.headquartersService = headquartersService;
         this.locationService = locationService;
@@ -33,7 +33,7 @@ public class SwiftFileProcessorServiceImpl implements SwiftFileProcessorService 
     @Override
     public void processSwiftFile() {
 
-        try (Stream<String> lines = Files.lines(Paths.get(appConfig.getFilePath()))) {
+        try (Stream<String> lines = Files.lines(Path.of(filePath))) {
             processor.processLines(lines);
         } catch (IOException e) {
             throw new RuntimeException(e);
