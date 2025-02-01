@@ -61,6 +61,17 @@ public class SwiftDataProcessor {
             // log.warn("Line {}: Invalid data - missing fields: {}", lineNumber, String.join(", ", missingFields));
             return false;
         }
+
+        if (!validateIso2code(iso2code)) {
+            System.err.println("Line " + lineNumber + ": Invalid ISO2 code: " + iso2code);
+            return false;
+        }
+
+        if (!validateSwiftCode(swiftCode)) {
+            System.err.println("Line " + lineNumber + ": Invalid SWIFT code: " + swiftCode);
+            return false;
+        }
+
         return true;
     }
 
@@ -103,5 +114,13 @@ public class SwiftDataProcessor {
             }
         }
         return missingFields;
+    }
+
+    private boolean validateIso2code(String iso2code) {
+        return iso2code.matches("^[A-Z]{2}$");
+    }
+
+    private boolean validateSwiftCode(String swiftCode) {
+        return swiftCode.matches("^[A-Z0-9]{11}$");
     }
 }
