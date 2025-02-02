@@ -12,7 +12,8 @@
     <artifactId>banking-swift-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>banking-swift-service</name>
-    <description>Spring Boot REST API for managing and retrieving SWIFT codes stored in a PostgresSQL database</description>
+    <description>Spring Boot REST API for managing and retrieving SWIFT codes stored in a PostgresSQL database
+    </description>
     <url>https://github.com/BartoszKorec/banking-swift-api</url>
 
     <!-- License Information -->
@@ -53,6 +54,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
+        <!-- Resolves testcontainers vulnerabilities: CVE-2024-25710 and CVE-2024-26308 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
@@ -144,7 +146,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-XX:-UseSharedSpaces</argLine> <!-- Disables warning: Sharing is only supported for boot loader classes-->
                     <excludes>
                         <exclude>**/*IT.java</exclude>
                     </excludes>
@@ -154,7 +155,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <argLine>-XX:-UseSharedSpaces</argLine> <!-- Disables warning: Sharing is only supported for boot loader classes-->
                     <includes>
                         <include>**/*IT.java</include>
                     </includes>
@@ -174,16 +174,37 @@
                 <version>0.8.12</version>
                 <executions>
                     <execution>
+                        <id>default-prepare-agent</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
                     <execution>
                         <id>default-report</id>
-                        <phase>test</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>default-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.60</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

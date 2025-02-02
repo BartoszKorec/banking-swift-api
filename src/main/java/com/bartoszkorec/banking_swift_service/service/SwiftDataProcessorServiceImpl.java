@@ -2,7 +2,7 @@ package com.bartoszkorec.banking_swift_service.service;
 
 import com.bartoszkorec.banking_swift_service.dto.BankDTO;
 import com.bartoszkorec.banking_swift_service.mapper.BankMapper;
-import com.bartoszkorec.banking_swift_service.processing.SwiftDataProcessor;
+import com.bartoszkorec.banking_swift_service.processing.SwiftDataProcessorImpl;
 import jakarta.persistence.NoResultException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +20,11 @@ public class SwiftDataProcessorServiceImpl implements SwiftDataProcessorService 
 
     private final BranchService branchService;
     private final HeadquartersService headquartersService;
-    private final SwiftDataProcessor processor;
+    private final SwiftDataProcessorImpl processor;
     private final BankMapper bankMapper;
 
     @Autowired
-    public SwiftDataProcessorServiceImpl(BranchService branchService, HeadquartersService headquartersService, SwiftDataProcessor processor, BankMapper bankMapper) {
+    public SwiftDataProcessorServiceImpl(BranchService branchService, HeadquartersService headquartersService, SwiftDataProcessorImpl processor, BankMapper bankMapper) {
         this.branchService = branchService;
         this.headquartersService = headquartersService;
         this.processor = processor;

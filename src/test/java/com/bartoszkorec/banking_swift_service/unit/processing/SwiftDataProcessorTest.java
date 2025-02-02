@@ -1,10 +1,17 @@
-package com.bartoszkorec.banking_swift_service.processing;
+package com.bartoszkorec.banking_swift_service.unit.processing;
 
+import com.bartoszkorec.banking_swift_service.processing.SwiftDataProcessor;
+import com.bartoszkorec.banking_swift_service.processing.SwiftDataProcessorImpl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.stream.Stream;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.not;
 
 @ExtendWith(SpringExtension.class)
 public class SwiftDataProcessorTest {
@@ -15,7 +22,7 @@ public class SwiftDataProcessorTest {
 
     @BeforeEach
     void setUp() {
-        processor = new SwiftDataProcessor();
+        processor = new SwiftDataProcessorImpl();
 
         correctData = Stream.of("MC\tBERLMCMCBDF\tBIC11\tEDMOND DE ROTHSCHILD-MONACO\t  MONACO, MONACO, 98000\tMONACO\tMONACO\tEurope/Monaco\n", // correct branch, corresponding hq is below
                 "MC\tBERLMCMCXXX\tBIC11\tEDMOND DE ROTHSCHILD-MONACO\tLES TERRASSES, CARLO 2 AVENUE DE MONTE MONACO, MONACO, 98000\tMONACO\tMONACO\tEurope/Monaco\n", // correct hq
@@ -35,34 +42,27 @@ public class SwiftDataProcessorTest {
         );
     }
 
-//    @Test
-//    void correctDataShouldBeAccessible() {
-//        // Given
-//        // When
-//        processor.processLines(correctData);
-//
-//        // Then
-//        assertThat(processor.getBranches(), hasKey("BERLMCMCBDF"));
-//        assertThat(processor.getHeadquarters(), hasKey("BERLMCMCXXX"));
-//    }
-//
-//    @Test
-//    void invalidDataShouldNotBeAccessible() {
-//        // Given
-//        // When
-//        processor.processLines(correctData);
-//        processor.processLines(badData);
-//
-//        // Then
-//        assertThat(processor.getBranches(), not(hasKey("ALBPPLPWCUS")));
-//
-//        assertThat(processor.getBranches(), not(hasKey("")));
-//        assertThat(processor.getHeadquarters(), not(hasKey("")));
-//
-//        assertThat(processor.getBranches(), not(hasKey((String) null)));
-//        assertThat(processor.getHeadquarters(), not(hasKey((String) null)));
-//
-//        assertThat(processor.getBranches(), not(hasKey("AIZKLV22CLN")));
-//        assertThat(processor.getHeadquarters(), not(hasKey("AIZKLV2XXX")));
-//    }
+    @Test
+    void correctDataShouldBeAccessible() {
+        // Given
+        // When
+        processor.processLines(correctData);
+
+        // Then
+        assertThat(processor.getBanks(), hasKey("BERLMCMCBDF"));
+        assertThat(processor.getBanks(), hasKey("BERLMCMCXXX"));
+    }
+
+    @Test
+    void invalidDataShouldNotBeAccessible() {
+        // Given
+        // When
+        processor.processLines(correctData);
+        processor.processLines(badData);
+
+        // Then
+        assertThat(processor.getBanks(), not(hasKey("")));
+        assertThat(processor.getBanks(), not(hasKey("AIZKLV22CLN")));
+        assertThat(processor.getBanks(), not(hasKey("AIZKLV2XXX")));
+    }
 }
