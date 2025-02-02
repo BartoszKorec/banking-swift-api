@@ -2,7 +2,7 @@ package com.bartoszkorec.banking_swift_service.integration;
 
 import com.bartoszkorec.banking_swift_service.repository.BranchRepository;
 import com.bartoszkorec.banking_swift_service.repository.HeadquartersRepository;
-import com.bartoszkorec.banking_swift_service.service.SwiftFileProcessorService;
+import com.bartoszkorec.banking_swift_service.service.SwiftDataProcessorService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,12 +45,12 @@ public class SwiftDataIT {
 
     @Value("classpath:test-swift-data.tsv")
     private Path testDataPath;
-    private final SwiftFileProcessorService service;
+    private final SwiftDataProcessorService service;
     private final BranchRepository branchRepository;
     private final HeadquartersRepository headquartersRepository;
 
     @Autowired
-    public SwiftDataIT(SwiftFileProcessorService service, BranchRepository branchRepository, HeadquartersRepository headquartersRepository) {
+    public SwiftDataIT(SwiftDataProcessorService service, BranchRepository branchRepository, HeadquartersRepository headquartersRepository) {
         this.service = service;
         this.branchRepository = branchRepository;
         this.headquartersRepository = headquartersRepository;

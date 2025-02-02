@@ -4,5 +4,5 @@ import com.bartoszkorec.banking_swift_service.entity.Headquarters;
 
 public interface HeadquartersService {
 
-    void processHeadquarters(Headquarters headquarters);
+    Headquarters processHeadquarters(Headquarters headquarters);
 }

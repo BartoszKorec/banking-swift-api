@@ -1,25 +1,22 @@
 package com.bartoszkorec.banking_swift_service.processing;
 
-import com.bartoszkorec.banking_swift_service.entity.Branch;
-import com.bartoszkorec.banking_swift_service.entity.Country;
-import com.bartoszkorec.banking_swift_service.entity.Headquarters;
-import com.bartoszkorec.banking_swift_service.entity.Location;
+import com.bartoszkorec.banking_swift_service.dto.BankDTO;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
+
+import static com.bartoszkorec.banking_swift_service.validation.SwiftDataValidator.validateFields;
 
 @Slf4j
 @Getter
 @Component
 public class SwiftDataProcessor {
 
-    private final Map<String, Country> countries = new HashMap<>();
-    private final Map<String, Location> locations = new HashMap<>();
-    private final Map<String, Headquarters> headquarters = new HashMap<>();
-    private final Map<String, Branch> branches = new HashMap<>();
+    private final Map<String, BankDTO> banks = new HashMap<>();
 
     public void processLines(Stream<String> lines) {
         int[] lineCounter = {2};
@@ -27,17 +24,11 @@ public class SwiftDataProcessor {
         lines.map(line -> line + "\t" + lineCounter[0]++)
                 .skip(1)
                 .map(line -> line.split("\t"))
-                .sorted(Comparator.comparing(arr -> arr[1], this::compareSwiftCodes))
                 .forEach(this::processLine);
     }
 
-    private int compareSwiftCodes(String s1, String s2) {
-        boolean s1EndsWithXXX = s1.endsWith("XXX");
-        boolean s2EndsWithXXX = s2.endsWith("XXX");
-        return Boolean.compare(s2EndsWithXXX, s1EndsWithXXX); // Ensures "XXX" codes come first
-    }
-
     private void processLine(String[] arr) {
+
         String iso2code = arr[0].strip();
         String swiftCode = arr[1].strip();
         String name = arr[3].strip();
@@ -49,78 +40,15 @@ public class SwiftDataProcessor {
             return;
         }
 
-        if (swiftCode.endsWith("XXX")) {
-            processHeadquarters(iso2code, swiftCode, name, address, countryName, lineNumber);
-        } else {
-            processBranch(iso2code, swiftCode, name, address, countryName, lineNumber);
-        }
-    }
-
-    private boolean validateFields(String iso2code, String swiftCode, String name, String address, String countryName, String lineNumber) {
-        List<String> missingFields = checkBlankFields(iso2code, swiftCode, name, address, countryName);
-        if (!missingFields.isEmpty()) {
-             log.warn("Line {}: Invalid data - missing fields: {}", lineNumber, String.join(", ", missingFields));
-            return false;
-        }
-
-        if (!validateIso2code(iso2code)) {
-            log.warn("Line {}: Invalid ISO2 code: {}", lineNumber, iso2code);
-            return false;
-        }
-
-        if (!validateSwiftCode(swiftCode)) {
-            log.warn("Line {}: Invalid SWIFT code: {}", lineNumber, swiftCode);
-            return false;
-        }
-
-        return true;
-    }
-
-    private void processHeadquarters(String iso2code, String swiftCode, String name, String address, String countryName, String lineNumber) {
-        if (headquarters.containsKey(swiftCode)) {
-             log.warn("Line {}: Duplicate headquarters found with Swift code: {}", lineNumber, swiftCode);
-            return;
-        }
-        headquarters.put(swiftCode, new Headquarters(swiftCode, name, findOrCreateLocation(iso2code, address, countryName)));
-    }
-
-    private void processBranch(String iso2code, String swiftCode, String name, String address, String countryName, String lineNumber) {
-        String headquartersSwiftCode = swiftCode.substring(0, 8) + "XXX";
-        Headquarters hq = headquarters.get(headquartersSwiftCode);
-
-        if (hq == null || branches.containsKey(swiftCode)) {
-             log.warn("Line {}: No matching headquarters found or duplicate branch with Swift code: {}", lineNumber, swiftCode);
-            return;
-        }
-
-        branches.put(swiftCode, new Branch(swiftCode, name, hq, findOrCreateLocation(iso2code, address, countryName)));
-    }
-
-    private Location findOrCreateLocation(String iso2code, String address, String countryName) {
-        return locations.computeIfAbsent(address, k -> new Location(null, address, findOrCreateCountry(iso2code, countryName)));
-    }
-
-    private Country findOrCreateCountry(String iso2code, String countryName) {
-        return countries.computeIfAbsent(iso2code, k -> new Country(iso2code, countryName));
-    }
-
-    private List<String> checkBlankFields(String... fields) {
-        String[] fieldNames = {"COUNTRY ISO2 CODE", "SWIFT CODE", "NAME", "ADDRESS", "COUNTRY NAME"};
-        List<String> missingFields = new ArrayList<>();
-
-        for (int i = 0; i < fields.length; i++) {
-            if (fields[i].isBlank()) {
-                missingFields.add(fieldNames[i]);
+        boolean isHeadquarter = swiftCode.endsWith("XXX");
+        if (banks.containsKey(swiftCode)) {
+            if (isHeadquarter) {
+                log.warn("Line {}: Duplicate headquarters found with Swift code: {}", lineNumber, swiftCode);
+            } else {
+                log.warn("Line {}: Duplicate branch found with Swift code: {}", lineNumber, swiftCode);
             }
+            return;
         }
-        return missingFields;
-    }
-
-    private boolean validateIso2code(String iso2code) {
-        return iso2code.matches("^[A-Z]{2}$");
-    }
-
-    private boolean validateSwiftCode(String swiftCode) {
-        return swiftCode.matches("^[A-Z0-9]{11}$");
+        banks.put(swiftCode, new BankDTO(address, name, iso2code, countryName, isHeadquarter, swiftCode));
     }
 }

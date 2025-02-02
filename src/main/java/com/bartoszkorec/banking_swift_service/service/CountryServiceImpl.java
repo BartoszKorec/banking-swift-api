@@ -16,8 +16,9 @@ public class CountryServiceImpl implements CountryService {
     }
 
     @Override
-    public void processCountry(Country country) {
+    public Country processCountry(Country country) {
 
-        countryRepository.save(country);
+        return countryRepository.findById(country.getIso2Code())
+                .orElseGet(() -> countryRepository.save(country));
     }
 }

@@ -4,5 +4,5 @@ import com.bartoszkorec.banking_swift_service.entity.Country;
 
 public interface CountryService {
 
-    void processCountry(Country country);
+    Country processCountry(Country country);
 }

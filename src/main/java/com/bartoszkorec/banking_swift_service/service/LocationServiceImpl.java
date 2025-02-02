@@ -9,15 +9,19 @@ import org.springframework.stereotype.Service;
 public class LocationServiceImpl implements LocationService {
 
     private final LocationRepository locationRepository;
+    private final CountryService countryService;
 
     @Autowired
-    public LocationServiceImpl(LocationRepository locationRepository) {
+    public LocationServiceImpl(LocationRepository locationRepository, CountryService countryService) {
         this.locationRepository = locationRepository;
+        this.countryService = countryService;
     }
 
     @Override
-    public void processLocation(Location location) {
+    public Location processLocation(Location location) {
 
-        locationRepository.save(location);
+        location.setCountry(countryService.processCountry(location.getCountry()));
+        return locationRepository.findByAddressLine(location.getAddressLine())
+                .orElseGet(() -> locationRepository.save(location));
     }
 }
