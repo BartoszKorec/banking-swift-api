@@ -5,7 +5,9 @@ import com.bartoszkorec.banking_swift_service.mapper.BankMapper;
 import com.bartoszkorec.banking_swift_service.processing.SwiftDataProcessorImpl;
 import jakarta.persistence.NoResultException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,19 +18,24 @@ import java.util.stream.Stream;
 
 @Service
 @Slf4j
-public class SwiftDataProcessorServiceImpl implements SwiftDataProcessorService {
+public class SwiftDataProcessorServiceImpl implements SwiftDataProcessorService, SmartInitializingSingleton {
+
+    @Value("${swift.file.path}")
+    private String swiftFilePath;
 
     private final BranchService branchService;
     private final HeadquartersService headquartersService;
     private final SwiftDataProcessorImpl processor;
     private final BankMapper bankMapper;
+    private final CountryService countryService;
 
     @Autowired
-    public SwiftDataProcessorServiceImpl(BranchService branchService, HeadquartersService headquartersService, SwiftDataProcessorImpl processor, BankMapper bankMapper) {
+    public SwiftDataProcessorServiceImpl(BranchService branchService, HeadquartersService headquartersService, SwiftDataProcessorImpl processor, BankMapper bankMapper, CountryService countryService) {
         this.branchService = branchService;
         this.headquartersService = headquartersService;
         this.processor = processor;
         this.bankMapper = bankMapper;
+        this.countryService = countryService;
     }
 
     @Override
@@ -55,6 +62,13 @@ public class SwiftDataProcessorServiceImpl implements SwiftDataProcessorService 
             }
         } catch (NoResultException e) {
             log.warn("Error processing bank with SWIFT code: {}. Error: {}", bankDTO.getSwiftCode(), e.getMessage());
+        }
+    }
+
+    @Override
+    public void afterSingletonsInstantiated() {
+        if (countryService.isDatabaseEmpty()) {
+            processSwiftFile(Path.of(swiftFilePath));
         }
     }
 }

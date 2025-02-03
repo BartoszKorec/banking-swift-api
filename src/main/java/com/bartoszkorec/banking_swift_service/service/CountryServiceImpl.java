@@ -33,4 +33,9 @@ public class CountryServiceImpl implements CountryService {
                 .orElseThrow(() -> new NoResultException("cannot find country with ISO2 code: " + countryISO2code));
         return countryMapper.toDTO(country);
     }
+
+    @Override
+    public boolean isDatabaseEmpty() {
+        return countryRepository.count() == 0L;
+    }
 }

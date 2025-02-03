@@ -8,4 +8,6 @@ public interface CountryService {
     Country processCountry(Country country);
 
     CountryDTO findByIso2Code(String countryISO2code);
+
+    boolean isDatabaseEmpty();
 }
