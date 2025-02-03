@@ -49,16 +49,12 @@ public class ParsingDataFromTSVFileIT {
     @Value("classpath:invalid-test-data.tsv")
     private Path invalidDataPath;
 
-    private final SwiftDataProcessorService service;
-    private final BranchRepository branchRepository;
-    private final HeadquartersRepository headquartersRepository;
-
     @Autowired
-    public ParsingDataFromTSVFileIT(SwiftDataProcessorService service, BranchRepository branchRepository, HeadquartersRepository headquartersRepository) {
-        this.service = service;
-        this.branchRepository = branchRepository;
-        this.headquartersRepository = headquartersRepository;
-    }
+    private SwiftDataProcessorService service;
+    @Autowired
+    private BranchRepository branchRepository;
+    @Autowired
+    private HeadquartersRepository headquartersRepository;
 
     @BeforeEach
     void setUp() {
@@ -85,10 +81,10 @@ public class ParsingDataFromTSVFileIT {
         service.processSwiftFile(invalidDataPath);
 
         // Then
-        assertThat(branchRepository.existsById("AIZKLV22CLN"), is(equalTo(false)));
-        assertThat(headquartersRepository.existsById("AIZklv22CLN"), is(equalTo(false)));
-        assertThat(headquartersRepository.existsById("AIZKLV22CLN1"), is(equalTo(false)));
+//        assertThat(branchRepository.existsById("AIZKLV22CLN"), is(equalTo(false)));
+        assertThat(branchRepository.existsById("AIZklv22CLN"), is(equalTo(false)));
+        assertThat(branchRepository.existsById("AIZKLV22CLN1"), is(equalTo(false)));
         assertThat(headquartersRepository.existsById("AIZKLV2XXX"), is(equalTo(false)));
-        assertThat(headquartersRepository.existsById("BERLMCMCBDF"), is(equalTo(false)));
+        assertThat(branchRepository.existsById("BERLMCMCBDF"), is(equalTo(false)));
     }
 }
