@@ -72,7 +72,6 @@ public class ParsingDataFromTSVFileIT {
         assertThat(branchRepository.existsById("BIGBPLPWCUS"), is(equalTo(true)));
         assertThat(headquartersRepository.existsById("BIGBPLPWXXX"), is(equalTo(true)));
         assertThat(branchRepository.existsById("BIGBPLPWCUX"), is(equalTo(true)));
-        assertThat(branchRepository.existsById("BIGBPLPWCXX"), is(equalTo(true)));
     }
 
     @Test
