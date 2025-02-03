@@ -13,23 +13,23 @@ import java.nio.file.Path;
 @SpringBootApplication
 public class BankingSwiftServiceApplication {
 
-//    @Value("${swift.file.path}")
-//    private String swiftFilePath;
-//	private final SwiftDataProcessorService swiftDataProcessorService;
-//
-//    @Autowired
-//    public BankingSwiftServiceApplication(SwiftDataProcessorService swiftDataProcessorService) {
-//        this.swiftDataProcessorService = swiftDataProcessorService;
-//    }
+    @Value("${swift.file.path}")
+    private String swiftFilePath;
+	private final SwiftDataProcessorService swiftDataProcessorService;
+
+    @Autowired
+    public BankingSwiftServiceApplication(SwiftDataProcessorService swiftDataProcessorService) {
+        this.swiftDataProcessorService = swiftDataProcessorService;
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(BankingSwiftServiceApplication.class, args);
     }
 
-//	@Bean
-//	public CommandLineRunner commandLineRunner() {
-//		return runner -> {
-//            swiftDataProcessorService.processSwiftFile(Path.of(swiftFilePath));
-//		};
-//	}
+	@Bean
+	public CommandLineRunner commandLineRunner() {
+		return runner -> {
+            swiftDataProcessorService.processSwiftFile(Path.of(swiftFilePath));
+		};
+	}
 }

@@ -31,14 +31,16 @@ public class SwiftDataValidatorTest {
                 Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", false, "AIZKLV22CLN1"), "swift code with 12 characters"),
                 Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", false, "AIzKLV22CLN"), "lowercase swift code"),
                 Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", false, "AIZKLV22XXX"), "branch code ending with XXX"),
-                Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", true, "AIZKLV22CLN"), "headquarters not ending with XXX")
+                Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", true, "AIZKLV22CLX"), "headquarters not ending with XXX")
         );
     }
 
     private static Stream<Arguments> correctBankData() {
         return Stream.of(
                 Arguments.of(new BankDTO("  MONACO, MONACO, 98000", "EDMOND DE ROTHSCHILD-MONACO", "MC", "MONACO", false, "BERLMCMCBDF"), "correct branch"),
-                Arguments.of(new BankDTO("LES TERRASSES, CARLO 2 AVENUE DE MONTE MONACO", "EDMOND DE ROTHSCHILD-MONACO", "MC", "MONACO", true, "BERLMCMCXXX"), "correct headquarters")
+                Arguments.of(new BankDTO("LES TERRASSES, CARLO 2 AVENUE DE MONTE MONACO", "EDMOND DE ROTHSCHILD-MONACO", "MC", "MONACO", true, "BERLMCMCXXX"), "correct headquarters"),
+                Arguments.of(new BankDTO("LES TERRASSES, CARLO 2 AVENUE DE MONTE MONACO", "EDMOND DE ROTHSCHILD-MONACO", "MC", "MONACO", false, "BERLMCMCBDX"), "correct branch"),
+                Arguments.of(new BankDTO("LES TERRASSES, CARLO 2 AVENUE DE MONTE MONACO", "EDMOND DE ROTHSCHILD-MONACO", "MC", "MONACO", false, "BERLMCMCBXX"), "correct branch")
         );
     }
 
