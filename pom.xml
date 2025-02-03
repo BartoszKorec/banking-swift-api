@@ -140,8 +140,6 @@
                     </excludes>
                 </configuration>
             </plugin>
-            <!-- mvn test will run only unit tests (files matching **/*Test.java)-->
-            <!-- mvn failsafe:integration-test failsafe:verify will run only integration tests-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

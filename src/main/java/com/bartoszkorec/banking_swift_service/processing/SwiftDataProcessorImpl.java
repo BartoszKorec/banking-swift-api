@@ -23,7 +23,6 @@ public class SwiftDataProcessorImpl implements SwiftDataProcessor {
         AtomicInteger lineCounter = new AtomicInteger(2);
 
         lines.map(line -> line + "\t" + lineCounter.getAndIncrement())
-                .skip(1) // Skip header
                 .map(line -> line.split("\t"))
                 .forEach(this::processLine);
     }

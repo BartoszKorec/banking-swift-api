@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.is;
 
 
 @SpringBootTest(properties = {"spring.main.banner-mode=off", "logging.level.root=warn"})
-public class SwiftDataIT {
+public class ParsingDataFromTSVFileIT {
 
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine");
 
@@ -43,14 +43,18 @@ public class SwiftDataIT {
         registry.add("spring.datasource.password", postgres::getPassword);
     }
 
-    @Value("classpath:test-swift-data.tsv")
-    private Path testDataPath;
+    @Value("classpath:correct-test-data.tsv")
+    private Path correctDataPath;
+
+    @Value("classpath:invalid-test-data.tsv")
+    private Path invalidDataPath;
+
     private final SwiftDataProcessorService service;
     private final BranchRepository branchRepository;
     private final HeadquartersRepository headquartersRepository;
 
     @Autowired
-    public SwiftDataIT(SwiftDataProcessorService service, BranchRepository branchRepository, HeadquartersRepository headquartersRepository) {
+    public ParsingDataFromTSVFileIT(SwiftDataProcessorService service, BranchRepository branchRepository, HeadquartersRepository headquartersRepository) {
         this.service = service;
         this.branchRepository = branchRepository;
         this.headquartersRepository = headquartersRepository;
@@ -63,13 +67,27 @@ public class SwiftDataIT {
     }
 
     @Test
-    void correctDataShouldBeProcessedAndRetrieved() {
-        // Given
+    void shouldStoreCorrectData() {
+
         // When
-        service.processSwiftFile(testDataPath);
+        service.processSwiftFile(correctDataPath);
 
         // Then
         assertThat(branchRepository.existsById("BIGBPLPWCUS"), is(equalTo(true)));
         assertThat(headquartersRepository.existsById("BIGBPLPWXXX"), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldNotStoreInvalidData() {
+
+        // When
+        service.processSwiftFile(invalidDataPath);
+
+        // Then
+        assertThat(branchRepository.existsById("AIZKLV22CLN"), is(equalTo(false)));
+        assertThat(headquartersRepository.existsById("AIZklv22CLN"), is(equalTo(false)));
+        assertThat(headquartersRepository.existsById("AIZKLV22CLN1"), is(equalTo(false)));
+        assertThat(headquartersRepository.existsById("AIZKLV2XXX"), is(equalTo(false)));
+        assertThat(headquartersRepository.existsById("BERLMCMCBDF"), is(equalTo(false)));
     }
 }

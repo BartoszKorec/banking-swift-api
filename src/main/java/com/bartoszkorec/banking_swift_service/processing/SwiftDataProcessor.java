@@ -13,10 +13,10 @@ public interface SwiftDataProcessor {
 
     default BankDTO processData(String address, String bankName, String iso2Code, String countryName, String swiftCode, String lineNumber) {
 
-        if (!validateFields(iso2Code, swiftCode, bankName, address, countryName, lineNumber)) {
+        boolean isHeadquarters = swiftCode.endsWith("XXX");
+        if (!validateFields(iso2Code, swiftCode, bankName, address, countryName, isHeadquarters, lineNumber)) {
             return null;
         }
-        boolean isHeadquarters = swiftCode.endsWith("XXX");
         return new BankDTO(address, bankName, iso2Code, countryName, isHeadquarters, swiftCode);
     }
 

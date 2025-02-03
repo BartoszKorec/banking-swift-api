@@ -10,7 +10,6 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface BankMapper {
 
-    @Mapping(source = "swiftCode", target = "swiftCode")
     @Mapping(source = "name", target = "bankName")
     @Mapping(source = "location.addressLine", target = "address")
     @Mapping(source = "location.country.countryName", target = "countryName")
@@ -18,7 +17,6 @@ public interface BankMapper {
     @Mapping(target = "isHeadquarters", expression = "java(false)")
     BankDTO toDTO(Branch branch);
 
-    @Mapping(source = "swiftCode", target = "swiftCode")
     @Mapping(source = "name", target = "bankName")
     @Mapping(source = "location.addressLine", target = "address")
     @Mapping(source = "location.country.countryName", target = "countryName")
@@ -30,7 +28,6 @@ public interface BankMapper {
     @Mapping(source = "bankName", target = "name")
     @Mapping(source = "countryISO2", target = "location.country.iso2Code")
     @Mapping(source = "countryName", target = "location.country.countryName")
-    @Mapping(source = "swiftCode", target = "swiftCode")
     @Mapping(source = "swiftCode", qualifiedByName = "mapSwiftCode", target = "headquarters.swiftCode")
     Branch toBranchEntity(BankDTO bankDTO);
 
@@ -38,7 +35,6 @@ public interface BankMapper {
     @Mapping(source = "bankName", target = "name")
     @Mapping(source = "countryISO2", target = "location.country.iso2Code")
     @Mapping(source = "countryName", target = "location.country.countryName")
-    @Mapping(source = "swiftCode", target = "swiftCode")
     Headquarters toHeadquartersEntity(BankDTO bankDTO);
 
     default Object toEntity(BankDTO bankDTO) {

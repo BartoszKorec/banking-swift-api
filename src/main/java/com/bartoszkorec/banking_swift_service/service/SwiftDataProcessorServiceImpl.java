@@ -34,7 +34,7 @@ public class SwiftDataProcessorServiceImpl implements SwiftDataProcessorService 
     @Override
     public void processSwiftFile(Path path) {
 
-        try (Stream<String> lines = Files.lines(path)) {
+        try (Stream<String> lines = Files.lines(path).skip(1)) { // skip header
             processor.processLines(lines);
         } catch (IOException e) {
             log.error("Error processing SWIFT file: {}", path, e);

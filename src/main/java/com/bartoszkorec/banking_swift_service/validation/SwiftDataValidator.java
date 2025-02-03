@@ -8,7 +8,7 @@ import java.util.List;
 @Slf4j
 public abstract class SwiftDataValidator {
 
-    public static boolean validateFields(String iso2code, String swiftCode, String name, String address, String countryName, String lineNumber) {
+    public static boolean validateFields(String iso2code, String swiftCode, String name, String address, String countryName, boolean isHeadquarters, String lineNumber) {
 
         List<String> missingFields = checkBlankFields(iso2code, swiftCode, name, address, countryName);
         if (!missingFields.isEmpty()) {
@@ -25,9 +25,16 @@ public abstract class SwiftDataValidator {
             return false;
         }
 
-        if (!validateSwiftCode(swiftCode)) {
+        if (!validateSwiftCode(swiftCode, isHeadquarters)) {
             if (lineNumber != null) {
                 log.warn("Line {}: Invalid SWIFT code: {}", lineNumber, swiftCode);
+            }
+            return false;
+        }
+
+        if (!validateCountryName(countryName)) {
+            if (lineNumber != null) {
+                log.warn("Line {}: Invalid COUNTRY_NAME code: {}", lineNumber, countryName);
             }
             return false;
         }
@@ -35,9 +42,9 @@ public abstract class SwiftDataValidator {
         return true;
     }
 
-    public static boolean validateFields(String iso2code, String swiftCode, String name, String address, String countryName) {
+    public static boolean validateFields(String iso2code, String swiftCode, String name, String address, String countryName, boolean isHeadquarters) {
 
-        return validateFields(iso2code, swiftCode, name, address, countryName, null);
+        return validateFields(iso2code, swiftCode, name, address, countryName, isHeadquarters, null);
     }
 
     private static List<String> checkBlankFields(String... fields) {
@@ -52,11 +59,15 @@ public abstract class SwiftDataValidator {
         return missingFields;
     }
 
-    public static boolean validateIso2code(String iso2code) {
+    private static boolean validateIso2code(String iso2code) {
         return iso2code.matches("^[A-Z]{2}$");
     }
 
-    public static boolean validateSwiftCode(String swiftCode) {
-        return swiftCode.matches("^[A-Z0-9]{11}$");
+    private static boolean validateSwiftCode(String swiftCode, boolean isHeadquarters) {
+        return isHeadquarters ? swiftCode.matches("^[A-Z0-9]{8}[X]{3}$") : swiftCode.matches("^[A-Z0-9]{8}[^X]{3}$");
+    }
+
+    private static boolean validateCountryName(String countryName) {
+        return countryName.matches("[A-Z]+");
     }
 }
