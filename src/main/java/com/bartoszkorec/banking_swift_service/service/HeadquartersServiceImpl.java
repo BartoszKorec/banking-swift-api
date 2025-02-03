@@ -38,4 +38,14 @@ public class HeadquartersServiceImpl implements HeadquartersService {
                 .orElseThrow(() -> new NoResultException("cannot find headquarters with swift code: " + swiftCode));
         return bankMapper.toDTO(headquarters);
     }
+
+    @Override
+    public BankDTO addHeadquarters(BankDTO bank) {
+        return bankMapper.toDTO(processHeadquarters(bankMapper.toHeadquartersEntity(bank)));
+    }
+
+    @Override
+    public void deleteHeadquarters(String swiftCode) {
+        headquartersRepository.deleteById(swiftCode);
+    }
 }

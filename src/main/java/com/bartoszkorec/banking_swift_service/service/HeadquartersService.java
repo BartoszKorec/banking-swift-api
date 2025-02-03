@@ -8,4 +8,8 @@ public interface HeadquartersService {
     Headquarters processHeadquarters(Headquarters headquarters);
 
     BankDTO findBySwiftCode(String swiftCode);
+
+    BankDTO addHeadquarters(BankDTO bank);
+
+    void deleteHeadquarters(String swiftCode);
 }

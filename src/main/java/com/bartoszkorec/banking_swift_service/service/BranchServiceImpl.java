@@ -46,4 +46,14 @@ public class BranchServiceImpl implements BranchService {
                 .orElseThrow(() -> new NoResultException("cannot find branch with swift code: " + swiftCode));
         return bankMapper.toDTO(branch);
     }
+
+    @Override
+    public BankDTO addBranch(BankDTO bank) {
+        return bankMapper.toDTO(processBranch(bankMapper.toBranchEntity(bank)));
+    }
+
+    @Override
+    public void deleteBranch(String swiftCode) {
+        branchRepository.deleteById(swiftCode);
+    }
 }

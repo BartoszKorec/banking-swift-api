@@ -8,4 +8,8 @@ public interface SwiftService {
     BankDTO findBySwiftCode(String swiftCode);
 
     CountryDTO findByCountryISO2code(String countryISO2code);
+
+    String addBank(BankDTO bank);
+
+    String deleteBank(String swiftCode);
 }

@@ -7,4 +7,8 @@ public interface BranchService {
     Branch processBranch(Branch branch);
 
     BankDTO findBySwiftCode(String swiftCode);
+
+    BankDTO addBranch(BankDTO bank);
+
+    void deleteBranch(String swiftCode);
 }
