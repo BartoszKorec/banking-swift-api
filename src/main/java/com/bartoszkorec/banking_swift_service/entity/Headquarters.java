@@ -8,6 +8,9 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
@@ -29,7 +32,6 @@ public class Headquarters {
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
-//    @OneToMany(mappedBy = "headquarter")
-//    private Set<Branch> branches = new HashSet<>();
-
+    @OneToMany(mappedBy = "headquarters")
+    private Set<Branch> branches = new HashSet<>();
 }

@@ -18,27 +18,27 @@ public class SwiftDataValidatorTest {
 
     private static Stream<Arguments> invalidBankData() {
         return Stream.of(
-                Arguments.of(new BankDTO("  ", "abc", "LV", "ABC", false, "AIZKLV22CLN"), "blank bank address"),
-                Arguments.of(new BankDTO("abc", "  ", "LV", "ABC", false, "AIZKLV22CLN"), "blank bank name"),
-                Arguments.of(new BankDTO("abc", "abc", "  ", "ABC", false, "AIZKLV22CLN"), "blank iso2 code"),
-                Arguments.of(new BankDTO("abc", "abc", "lv", "ABC", false, "AIZKLV22CLN"), "lowercase iso2 code"),
-                Arguments.of(new BankDTO("abc", "abc", "L", "ABC", false, "AIZKLV22CLN"), "one-letter iso2 code"),
-                Arguments.of(new BankDTO("abc", "abc", "11", "ABC", false, "AIZKLV22CLN"), "two-digit iso2 code"),
-                Arguments.of(new BankDTO("abc", "abc", "L1", "ABC", false, "AIZKLV22CLN"), "alphanumeric iso2 code"),
-                Arguments.of(new BankDTO("abc", "abc", "LV", "Abc", false, "AIZKLV22CLN"), "lowercase country name"),
-                Arguments.of(new BankDTO("abc", "abc", "LV", "ABC12", false, "AIZKLV22CLN"), "country name containing digits"),
-                Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", false, "AIZKLV22CL"), "swift code with 10 characters"),
-                Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", false, "AIZKLV22CLN1"), "swift code with 12 characters"),
-                Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", false, "AIzKLV22CLN"), "lowercase swift code"),
-                Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", false, "AIZKLV22XXX"), "branch code ending with XXX"),
-                Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", true, "AIZKLV22CLN"), "headquarters not ending with XXX")
+                Arguments.of(new BankDTO("  ", "abc", "LV", "ABC", false, "AIZKLV22CLN", null), "blank bank address"),
+                Arguments.of(new BankDTO("abc", "  ", "LV", "ABC", false, "AIZKLV22CLN", null), "blank bank name"),
+                Arguments.of(new BankDTO("abc", "abc", "  ", "ABC", false, "AIZKLV22CLN", null), "blank iso2 code"),
+                Arguments.of(new BankDTO("abc", "abc", "lv", "ABC", false, "AIZKLV22CLN", null), "lowercase iso2 code"),
+                Arguments.of(new BankDTO("abc", "abc", "L", "ABC", false, "AIZKLV22CLN", null), "one-letter iso2 code"),
+                Arguments.of(new BankDTO("abc", "abc", "11", "ABC", false, "AIZKLV22CLN", null), "two-digit iso2 code"),
+                Arguments.of(new BankDTO("abc", "abc", "L1", "ABC", false, "AIZKLV22CLN", null), "alphanumeric iso2 code"),
+                Arguments.of(new BankDTO("abc", "abc", "LV", "Abc", false, "AIZKLV22CLN", null), "lowercase country name"),
+                Arguments.of(new BankDTO("abc", "abc", "LV", "ABC12", false, "AIZKLV22CLN", null), "country name containing digits"),
+                Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", false, "AIZKLV22CL", null), "swift code with 10 characters"),
+                Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", false, "AIZKLV22CLN1", null), "swift code with 12 characters"),
+                Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", false, "AIzKLV22CLN", null), "lowercase swift code"),
+                Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", false, "AIZKLV22XXX", null), "branch code ending with XXX"),
+                Arguments.of(new BankDTO("abc", "abc", "LV", "ABC", true, "AIZKLV22CLN", null), "headquarters not ending with XXX")
         );
     }
 
     private static Stream<Arguments> correctBankData() {
         return Stream.of(
-                Arguments.of(new BankDTO("  MONACO, MONACO, 98000", "EDMOND DE ROTHSCHILD-MONACO", "MC", "MONACO", false, "BERLMCMCBDF"), "correct branch"),
-                Arguments.of(new BankDTO("LES TERRASSES, CARLO 2 AVENUE DE MONTE MONACO", "EDMOND DE ROTHSCHILD-MONACO", "MC", "MONACO", true, "BERLMCMCXXX"), "correct headquarters")
+                Arguments.of(new BankDTO("  MONACO, MONACO, 98000", "EDMOND DE ROTHSCHILD-MONACO", "MC", "MONACO", false, "BERLMCMCBDF", null), "correct branch"),
+                Arguments.of(new BankDTO("LES TERRASSES, CARLO 2 AVENUE DE MONTE MONACO", "EDMOND DE ROTHSCHILD-MONACO", "MC", "MONACO", true, "BERLMCMCXXX", null), "correct headquarters")
         );
     }
 

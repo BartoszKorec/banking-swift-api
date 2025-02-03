@@ -2,6 +2,7 @@ package com.bartoszkorec.banking_swift_service.processing;
 
 import com.bartoszkorec.banking_swift_service.dto.BankDTO;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -17,7 +18,7 @@ public interface SwiftDataProcessor {
         if (!validateFields(iso2Code, swiftCode, bankName, address, countryName, isHeadquarters, lineNumber)) {
             return null;
         }
-        return new BankDTO(address, bankName, iso2Code, countryName, isHeadquarters, swiftCode);
+        return new BankDTO(address, bankName, iso2Code, countryName, isHeadquarters, swiftCode, isHeadquarters ? new HashSet<>() : null);
     }
 
     default BankDTO processData(String address, String bankName, String iso2Code, String countryName, String swiftCode) {

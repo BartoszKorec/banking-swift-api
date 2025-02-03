@@ -15,6 +15,7 @@ public interface BankMapper {
     @Mapping(source = "location.country.countryName", target = "countryName")
     @Mapping(source = "location.country.iso2Code", target = "countryISO2")
     @Mapping(target = "isHeadquarters", expression = "java(false)")
+    @Mapping(target = "branches", expression = "java(null)")
     BankDTO toDTO(Branch branch);
 
     @Mapping(source = "name", target = "bankName")
