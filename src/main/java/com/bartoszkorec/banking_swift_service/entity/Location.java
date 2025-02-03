@@ -8,6 +8,9 @@ import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
@@ -30,9 +33,9 @@ public class Location {
     @JoinColumn(name = "iso2_code", nullable = false)
     private Country country;
 
-//    @OneToMany(mappedBy = "location")
-//    private Set<Branch> branches = new LinkedHashSet<>();
-//
-//    @OneToMany(mappedBy = "location")
-//    private Set<Headquarters> headquarters = new LinkedHashSet<>();
+    @OneToMany(mappedBy = "location")
+    private Set<Branch> branches = new HashSet<>();
+
+    @OneToMany(mappedBy = "location")
+    private Set<Headquarters> headquarters = new HashSet<>();
 }

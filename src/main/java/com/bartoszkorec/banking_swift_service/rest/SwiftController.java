@@ -1,6 +1,7 @@
 package com.bartoszkorec.banking_swift_service.rest;
 
 import com.bartoszkorec.banking_swift_service.dto.BankDTO;
+import com.bartoszkorec.banking_swift_service.dto.CountryDTO;
 import com.bartoszkorec.banking_swift_service.service.SwiftService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,5 +21,10 @@ public class SwiftController {
     @GetMapping("/swift-codes/{swiftCode}")
     BankDTO getSwiftCode(@PathVariable String swiftCode) {
         return service.findBySwiftCode(swiftCode);
+    }
+
+    @GetMapping("/swift-codes/country/{countryISO2code}")
+    CountryDTO getBanks(@PathVariable String countryISO2code) {
+        return service.findByCountryISO2code(countryISO2code.toUpperCase());
     }
 }

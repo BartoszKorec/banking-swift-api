@@ -1,8 +1,7 @@
 package com.bartoszkorec.banking_swift_service.service;
 
 import com.bartoszkorec.banking_swift_service.dto.BankDTO;
-import com.bartoszkorec.banking_swift_service.entity.Branch;
-import com.bartoszkorec.banking_swift_service.entity.Headquarters;
+import com.bartoszkorec.banking_swift_service.dto.CountryDTO;
 import com.bartoszkorec.banking_swift_service.mapper.BankMapper;
 import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,19 +12,19 @@ public class SwiftServiceImpl implements SwiftService {
 
     private final HeadquartersService headquartersService;
     private final BranchService branchService;
-    private final BankMapper bankMapper;
+    private final CountryService countryService;
 
     @Autowired
-    public SwiftServiceImpl(HeadquartersService headquartersService, BranchService branchService, BankMapper bankMapper) {
+    public SwiftServiceImpl(HeadquartersService headquartersService, BranchService branchService, BankMapper bankMapper, CountryService countryService) {
         this.headquartersService = headquartersService;
         this.branchService = branchService;
-        this.bankMapper = bankMapper;
+        this.countryService = countryService;
     }
 
     @Override
     public BankDTO findBySwiftCode(String swiftCode) {
 
-        BankDTO bankDTO = null;
+        BankDTO bankDTO;
         try {
             bankDTO = headquartersService.findBySwiftCode(swiftCode);
         } catch (NoResultException e) {
@@ -38,5 +37,16 @@ public class SwiftServiceImpl implements SwiftService {
             }
         }
         return bankDTO;
+    }
+
+    @Override
+    public CountryDTO findByCountryISO2code(String countryISO2code) {
+        CountryDTO countryDTO;
+        try {
+            countryDTO  = countryService.findByIso2Code(countryISO2code);
+        } catch (NoResultException ex) {
+            return null;
+        }
+        return countryDTO;
     }
 }
