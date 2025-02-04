@@ -7,5 +7,4 @@ public interface BranchService {
     void addBranchDTOToDatabase(BankDTO branchDTO);
     BankDTO findBySwiftCode(String swiftCode);
     void deleteBranchFromDatabase(String swiftCode);
-    BankDTO validateBranchDTO(BankDTO branchDTO);
 }

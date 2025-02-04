@@ -5,7 +5,6 @@ import com.bartoszkorec.banking_swift_service.entity.Country;
 import com.bartoszkorec.banking_swift_service.exception.CountryNotFoundException;
 import com.bartoszkorec.banking_swift_service.mapper.CountryMapper;
 import com.bartoszkorec.banking_swift_service.repository.CountryRepository;
-import jakarta.persistence.NoResultException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

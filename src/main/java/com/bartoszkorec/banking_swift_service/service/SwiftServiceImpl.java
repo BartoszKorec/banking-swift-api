@@ -14,19 +14,20 @@ public class SwiftServiceImpl implements SwiftService {
     private final HeadquartersService headquartersService;
     private final BranchService branchService;
     private final CountryService countryService;
-    private final SwiftDataProcessor swiftDataProcessor;
+    private final SwiftDataProcessor processor;
 
     @Autowired
-    public SwiftServiceImpl(HeadquartersService headquartersService, BranchService branchService, CountryService countryService, SwiftDataProcessor swiftDataProcessor) {
+    public SwiftServiceImpl(HeadquartersService headquartersService, BranchService branchService, CountryService countryService, SwiftDataProcessor processor) {
         this.headquartersService = headquartersService;
         this.branchService = branchService;
         this.countryService = countryService;
-        this.swiftDataProcessor = swiftDataProcessor;
+        this.processor = processor;
     }
 
     @Override
     public BankDTO findBySwiftCode(String swiftCode) {
 
+        swiftCode = processor.safeTrimAndUpperCase(swiftCode, "SWIFT code is null");
         BankDTO bankDTO;
         try {
             bankDTO = headquartersService.findBySwiftCode(swiftCode);
@@ -43,6 +44,7 @@ public class SwiftServiceImpl implements SwiftService {
 
     @Override
     public CountryDTO findByCountryISO2code(String countryISO2code) {
+        countryISO2code = processor.safeTrimAndUpperCase(countryISO2code, "Country ISO2 code is nul");
         CountryDTO countryDTO;
         try {
             countryDTO = countryService.findByIso2Code(countryISO2code);
@@ -55,8 +57,12 @@ public class SwiftServiceImpl implements SwiftService {
     @Override
     public void addBankToDatabase(BankDTO bank) {
 
-        bank = swiftDataProcessor.processAndValidateBankDTO(bank);
-        if (bank.isHeadquarters()) {
+        String swiftCode = processor.safeTrimAndUpperCase(bank.getSwiftCode(), "SWIFT code is null");
+        bank.setCountryName(processor.safeTrimAndUpperCase(bank.getCountryName(), "Country name is null is null"));
+        bank.setCountryISO2(processor.safeTrimAndUpperCase(bank.getCountryISO2(), "Country ISO2 code is null"));
+        bank.setSwiftCode(swiftCode);
+
+        if (swiftCode.endsWith("XXX")) {
             headquartersService.addHeadquartersToDatabase(bank);
         } else {
             branchService.addBranchDTOToDatabase(bank);
@@ -65,6 +71,7 @@ public class SwiftServiceImpl implements SwiftService {
 
     @Override
     public void deleteBank(String swiftCode) {
+        swiftCode = processor.safeTrimAndUpperCase(swiftCode, "SWIFT code is null");
         if (swiftCode.endsWith("XXX")) {
             headquartersService.deleteHeadquartersFromDatabase(swiftCode);
         } else {

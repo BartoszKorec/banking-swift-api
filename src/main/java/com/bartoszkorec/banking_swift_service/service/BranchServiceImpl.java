@@ -4,7 +4,9 @@ import com.bartoszkorec.banking_swift_service.dto.BankDTO;
 import com.bartoszkorec.banking_swift_service.entity.Branch;
 import com.bartoszkorec.banking_swift_service.entity.Headquarters;
 import com.bartoszkorec.banking_swift_service.entity.Location;
-import com.bartoszkorec.banking_swift_service.exception.*;
+import com.bartoszkorec.banking_swift_service.exception.BankExistsInDatabaseException;
+import com.bartoszkorec.banking_swift_service.exception.BankNotFoundException;
+import com.bartoszkorec.banking_swift_service.exception.CorrespondingHeadquartersNotFoundException;
 import com.bartoszkorec.banking_swift_service.mapper.BankMapper;
 import com.bartoszkorec.banking_swift_service.processing.SwiftDataProcessor;
 import com.bartoszkorec.banking_swift_service.repository.BranchRepository;
@@ -33,13 +35,21 @@ public class BranchServiceImpl implements BranchService {
     @Override
     public void addBranchDTOToDatabase(BankDTO branchDTO) {
 
-        branchDTO = validateBranchDTO(branchDTO);
+        branchDTO = processor.processAndValidateBranchDTO(branchDTO);
+
+        String swiftCode = branchDTO.getSwiftCode();
+        if (branchRepository.existsById(swiftCode)) {
+            throw new BankExistsInDatabaseException("Cannot add bank to database with swift code: " + swiftCode + ". Bank already exists.");
+        }
+
         Branch branch = bankMapper.toBranchEntity(branchDTO);
         Location location = locationService.findOrCreateLocation(branch.getLocation());
         branch.setLocation(location);
         String hqSwiftCode = branch.getHeadquarters().getSwiftCode();
+
         Headquarters headquarters = headquartersRepository.findById(hqSwiftCode)
                 .orElseThrow(() -> new CorrespondingHeadquartersNotFoundException("No corresponding headquarters found for the branch with SWIFT code: " + branch.getSwiftCode()));
+
         branch.setHeadquarters(headquarters);
         branchRepository.save(branch);
     }
@@ -57,21 +67,5 @@ public class BranchServiceImpl implements BranchService {
             throw new BankNotFoundException("Cannot delete bank with swift code: " + swiftCode + ". Bank does not exists in database.");
         }
         branchRepository.deleteById(swiftCode);
-    }
-
-    @Override
-    public BankDTO validateBranchDTO(BankDTO branchDTO) {
-
-        branchDTO = processor.processAndValidateBankDTO(branchDTO);
-
-        branchDTO.setHeadquarters(false);
-        String swiftCode = branchDTO.getSwiftCode();
-        if (swiftCode.endsWith("XXX")) {
-            throw new InvalidBranchException("Invalid branch SWIFT code. A SWIFT code ending with 'XXX' indicates a headquarters: " + swiftCode);
-        }
-        if (branchRepository.existsById(swiftCode)) {
-            throw new BankExistsInDatabaseException("Cannot add bank to database with swift code: " + swiftCode + ". Bank already exists.");
-        }
-        return branchDTO;
     }
 }

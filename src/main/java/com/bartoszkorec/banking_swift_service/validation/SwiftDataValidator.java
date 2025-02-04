@@ -68,7 +68,7 @@ public abstract class SwiftDataValidator {
     }
 
     private static boolean validateSwiftCode(String swiftCode, boolean isHeadquarters) {
-        return isHeadquarters ? swiftCode.matches("^[A-Z0-9]{8}[X]{3}$") : swiftCode.matches("^[A-Z0-9]{8}(?!XXX$)[A-Z0-9]{3}$");
+        return isHeadquarters ? swiftCode.matches("^[A-Z0-9]{8}X{3}$") : swiftCode.matches("^[A-Z0-9]{8}(?!XXX$)[A-Z0-9]{3}$");
     }
 
     private static boolean validateCountryName(String countryName) {

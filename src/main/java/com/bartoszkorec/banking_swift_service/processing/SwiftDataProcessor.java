@@ -1,7 +1,9 @@
 package com.bartoszkorec.banking_swift_service.processing;
 
 import com.bartoszkorec.banking_swift_service.dto.BankDTO;
+import com.bartoszkorec.banking_swift_service.exception.InvalidBranchException;
 import com.bartoszkorec.banking_swift_service.exception.InvalidFieldsException;
+import com.bartoszkorec.banking_swift_service.exception.InvalidHeadquartersException;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -15,47 +17,69 @@ public interface SwiftDataProcessor {
 
     default BankDTO processAndValidateData(String address, String bankName, String iso2Code, String countryName, String swiftCode, String lineNumber) {
 
-        iso2Code   = safeTrimAndUpperCase(iso2Code, "ISO2 code is null");
+        iso2Code = safeTrimAndUpperCase(iso2Code, "ISO2 code is null");
         countryName = safeTrimAndUpperCase(countryName, "Country name is null");
-        swiftCode   = safeTrimAndUpperCase(swiftCode, "SWIFT code is null");
+        swiftCode = safeTrimAndUpperCase(swiftCode, "SWIFT code is null");
 
         boolean isHeadquarters = swiftCode.endsWith("XXX");
         validateFields(iso2Code, swiftCode, bankName, address, countryName, isHeadquarters, lineNumber);
 
         address = address.strip();
         bankName = bankName.strip();
-        return new BankDTO(address, bankName, iso2Code, countryName, isHeadquarters, swiftCode, new HashSet<>());
+        return new BankDTO(address, bankName, iso2Code, countryName, isHeadquarters, swiftCode, null);
     }
 
-    default BankDTO processAndValidateBankDTO(BankDTO bankDTO) {
+    private BankDTO processAndValidateBankDTO(BankDTO bankDTO) {
 
-        bankDTO.setCountryISO2(safeTrimAndUpperCase(bankDTO.getCountryISO2(), "ISO2 code is null"));
-        bankDTO.setCountryName(safeTrimAndUpperCase(bankDTO.getCountryName(), "Country name is null"));
-        bankDTO.setSwiftCode(safeTrimAndUpperCase(bankDTO.getSwiftCode(), "SWIFT code is null"));
-
-        // currently isHeadquarters field that client pass is omitted
-        bankDTO.setHeadquarters(bankDTO.getSwiftCode().endsWith("XXX")); // to address client isHeadquarters, remove this line
-
-        validateFields(bankDTO.getCountryISO2(), bankDTO.getSwiftCode(), bankDTO.getBankName(), bankDTO.getAddress(), bankDTO.getCountryName(), bankDTO.isHeadquarters(), null);
+        validateFields(bankDTO.getCountryISO2(),
+                bankDTO.getSwiftCode(),
+                bankDTO.getBankName(),
+                bankDTO.getAddress(),
+                bankDTO.getCountryName(),
+                bankDTO.isHeadquarters(),
+                null
+        );
 
         bankDTO.setAddress(bankDTO.getAddress().strip());
         bankDTO.setBankName(bankDTO.getBankName().strip());
 
-        if (bankDTO.isHeadquarters() && bankDTO.getBranches() == null) {
-            bankDTO.setBranches(new HashSet<>());
-        } else if (!bankDTO.isHeadquarters()) {
-            bankDTO.setBranches(null);
-        }
-
         return bankDTO;
     }
 
-    private String safeTrimAndUpperCase(String value, String errorMessage) {
+    default BankDTO processAndValidateHeadquartersDTO(BankDTO headquartersDTO) {
+
+        String swiftCode = headquartersDTO.getSwiftCode();
+        if (!swiftCode.endsWith("XXX")) {
+            throw new InvalidHeadquartersException("Invalid headquarters SWIFT code. A SWIFT code not ending with 'XXX' indicates a branch: " + swiftCode);
+        }
+
+        // currently isHeadquarters field that client pass is omitted
+        headquartersDTO.setHeadquarters(true); // to address client isHeadquarters, remove this line
+        if (headquartersDTO.getBranches() == null) {
+            headquartersDTO.setBranches(new HashSet<>());
+        }
+        return processAndValidateBankDTO(headquartersDTO);
+    }
+
+    default BankDTO processAndValidateBranchDTO(BankDTO branchDTO) {
+
+        String swiftCode = branchDTO.getSwiftCode();
+        if (swiftCode.endsWith("XXX")) {
+            throw new InvalidBranchException("Invalid branch SWIFT code. A SWIFT code ending with 'XXX' indicates a headquarters: " + swiftCode);
+        }
+
+        // currently isHeadquarters field that client pass is omitted
+        branchDTO.setHeadquarters(false); // to address client isHeadquarters, remove this line
+        branchDTO.setBranches(null);
+        return processAndValidateBankDTO(branchDTO);
+    }
+
+    Map<String, BankDTO> getBanks();
+
+    default String safeTrimAndUpperCase(String value, String errorMessage) {
         if (value == null) {
             throw new InvalidFieldsException(errorMessage);
         }
         return value.strip().toUpperCase();
     }
-
-    Map<String, BankDTO> getBanks();
 }

@@ -3,7 +3,9 @@ package com.bartoszkorec.banking_swift_service.service;
 import com.bartoszkorec.banking_swift_service.dto.BankDTO;
 import com.bartoszkorec.banking_swift_service.entity.Headquarters;
 import com.bartoszkorec.banking_swift_service.entity.Location;
-import com.bartoszkorec.banking_swift_service.exception.*;
+import com.bartoszkorec.banking_swift_service.exception.BankExistsInDatabaseException;
+import com.bartoszkorec.banking_swift_service.exception.BankNotFoundException;
+import com.bartoszkorec.banking_swift_service.exception.InvalidBranchException;
 import com.bartoszkorec.banking_swift_service.mapper.BankMapper;
 import com.bartoszkorec.banking_swift_service.processing.SwiftDataProcessor;
 import com.bartoszkorec.banking_swift_service.repository.HeadquartersRepository;
@@ -19,32 +21,35 @@ public class HeadquartersServiceImpl implements HeadquartersService {
     private final LocationService locationService;
     private final BankMapper bankMapper;
     private final BranchService branchService;
+    private final SwiftDataProcessor processor;
 
     @Autowired
-    public HeadquartersServiceImpl(HeadquartersRepository headquartersRepository, LocationService locationService, BankMapper bankMapper, BranchService branchService) {
+    public HeadquartersServiceImpl(HeadquartersRepository headquartersRepository, LocationService locationService, BankMapper bankMapper, BranchService branchService, SwiftDataProcessor processor) {
         this.headquartersRepository = headquartersRepository;
         this.locationService = locationService;
         this.bankMapper = bankMapper;
         this.branchService = branchService;
+        this.processor = processor;
     }
 
     @Override
     public void addHeadquartersToDatabase(BankDTO headquartersDTO) {
 
-        String swiftCode = headquartersDTO.getSwiftCode();
-        if (!swiftCode.endsWith("XXX")) {
-            throw new InvalidHeadquartersException("Invalid headquarters SWIFT code. A SWIFT code not ending with 'XXX' indicates a branch: " + swiftCode);
+        headquartersDTO = processor.processAndValidateHeadquartersDTO(headquartersDTO);
+        Set<BankDTO> branches = headquartersDTO.getBranches();
+        try {
+            branches.forEach(processor::processAndValidateBranchDTO);
+        } catch (InvalidBranchException e) {
+            throw new InvalidBranchException("Invalid branch in headquarters with SWIFT code: " + headquartersDTO.getSwiftCode() + ". " + e.getMessage());
         }
+        String swiftCode = headquartersDTO.getSwiftCode();
         if (headquartersRepository.existsById(swiftCode)) {
             throw new BankExistsInDatabaseException("Cannot add bank to database with swift code: " + swiftCode + ". Bank already exists.");
         }
-        Headquarters headquarters = bankMapper.toHeadquartersEntity(headquartersDTO);
 
+        Headquarters headquarters = bankMapper.toHeadquartersEntity(headquartersDTO);
         Location location = locationService.findOrCreateLocation(headquarters.getLocation());
         headquarters.setLocation(location);
-
-        Set<BankDTO> branches = headquartersDTO.getBranches();
-        branches.forEach(branchService::validateBranchDTO);
 
         // Set branches to null initially to avoid potential issues with saving the headquarters entity.
         // Branches will be added separately to ensure the headquarters entity is fully persisted before associating branches.
@@ -54,7 +59,8 @@ public class HeadquartersServiceImpl implements HeadquartersService {
         branches.forEach(branch -> {
             try {
                 branchService.addBranchDTOToDatabase(branch);
-            } catch (BankExistsInDatabaseException ignore) {} // conflicts will be ignored
+            } catch (BankExistsInDatabaseException ignore) {
+            } // conflicts will be ignored
         });
     }
 
