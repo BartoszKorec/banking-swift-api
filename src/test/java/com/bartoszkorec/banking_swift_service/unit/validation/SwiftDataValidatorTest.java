@@ -36,6 +36,7 @@ public class SwiftDataValidatorTest {
 
     private static Stream<Arguments> correctBankData() {
         return Stream.of(
+                Arguments.of(new BankDTO("VALNU STREET 1  RIGA, RIGA, LV-1050", "NASDAQ CSD SE", "LV", "LATVIA", false, "LCDELV22LXX", null), "correct branch"),
                 Arguments.of(new BankDTO("VALNU STREET 1  RIGA, RIGA, LV-1050", "NASDAQ CSD SE", "LV", "LATVIA", false, "LCDELV22LVX", null), "correct branch"),
                 Arguments.of(new BankDTO("VALNU STREET 1  RIGA, RIGA, LV-1050", "NASDAQ CSD SE", "LV", "LATVIA", true, "LCDELV22XXX", null), "correct headquarters")
         );

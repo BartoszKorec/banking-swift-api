@@ -1,6 +1,7 @@
 package com.bartoszkorec.banking_swift_service.service;
 
 import com.bartoszkorec.banking_swift_service.dto.BankDTO;
+import com.bartoszkorec.banking_swift_service.exception.*;
 import com.bartoszkorec.banking_swift_service.processing.SwiftDataProcessorImpl;
 import jakarta.persistence.NoResultException;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +41,10 @@ public class SwiftFileServiceImpl implements SwiftFileService, SmartInitializing
 
         try (Stream<String> lines = Files.lines(path).skip(1)) { // skip header
             processor.processLines(lines);
+        } catch (InvalidFieldsException e) {
+            log.warn("Error processing SWIFT file: {}. Error: {}", path, e.getMessage());
         } catch (Exception e) {
-            log.error("Error processing SWIFT file: {}. Error: {}", path, e.getMessage());
+            log.error("Unexpected error processing SWIFT file: {}. Error: {}", path, e.getMessage());
         }
 
         processor.getBanks().values().stream()
@@ -51,10 +54,20 @@ public class SwiftFileServiceImpl implements SwiftFileService, SmartInitializing
 
     private void addDTOToDatabase(BankDTO bankDTO) {
 //        // No need to validate bankDTO since it's validated during processing lines
-        if (bankDTO.isHeadquarters()) {
-            headquartersService.addHeadquartersToDatabase((bankDTO));
-        } else {
-            branchService.addBranchDTOToDatabase(bankDTO);
+        try {
+            if (bankDTO.isHeadquarters()) {
+                headquartersService.addHeadquartersToDatabase((bankDTO));
+            } else {
+                branchService.addBranchDTOToDatabase(bankDTO);
+            }
+        } catch (CorrespondingHeadquartersNotFoundException e) {
+            log.warn("No corresponding headquarters found for the branch with SWIFT code: {}. Error: {}", bankDTO.getSwiftCode(), e.getMessage());
+        } catch (BankNotFoundException e) {
+            log.warn("Bank not found for the SWIFT code: {}. Error: {}", bankDTO.getSwiftCode(), e.getMessage());
+        } catch (BankExistsInDatabaseException e) {
+            log.warn("Bank already exists in the database for the SWIFT code: {}. Error: {}", bankDTO.getSwiftCode(), e.getMessage());
+        } catch (Exception e) {
+            log.error("Unexpected error processing bank with SWIFT code: {}. Error: {}", bankDTO.getSwiftCode(), e.getMessage());
         }
 //        try {
 //            if (bankDTO.isHeadquarters()) {

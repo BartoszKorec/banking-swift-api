@@ -1,6 +1,7 @@
 package com.bartoszkorec.banking_swift_service.processing;
 
 import com.bartoszkorec.banking_swift_service.dto.BankDTO;
+import com.bartoszkorec.banking_swift_service.exception.InvalidFieldsException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -39,7 +40,7 @@ public class SwiftDataProcessorImpl implements SwiftDataProcessor {
         try {
             BankDTO bankDTO = processAndValidateData(address, bankName, iso2Code, countryName, swiftCode, lineNumber);
             addBankToMap(bankDTO);
-        } catch (IllegalArgumentException ignore) {}
+        } catch (InvalidFieldsException ignore) {}
     }
 
     private void addBankToMap(BankDTO bank) {

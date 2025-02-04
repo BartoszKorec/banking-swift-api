@@ -23,8 +23,8 @@ public class BankExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler({BankNotFoundException.class, CountryNotFoundException.class})
-    public ResponseEntity<ErrorResponse> handleBankOrCountryNotFoundException(BankNotFoundException e, WebRequest request) {
+    @ExceptionHandler({BankNotFoundException.class, CountryNotFoundException.class, CorrespondingHeadquartersNotFoundException.class})
+    public ResponseEntity<ErrorResponse> handleBankOrCountryNotFoundException(RuntimeException e, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 e.getMessage(),
@@ -34,10 +34,8 @@ public class BankExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
 
-
-
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleInvalidFieldsException(InvalidFieldsException e, WebRequest request) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGenericException(Exception e, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 e.getMessage(),
