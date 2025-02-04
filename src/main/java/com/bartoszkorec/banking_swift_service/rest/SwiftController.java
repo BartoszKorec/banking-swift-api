@@ -4,6 +4,8 @@ import com.bartoszkorec.banking_swift_service.dto.BankDTO;
 import com.bartoszkorec.banking_swift_service.dto.CountryDTO;
 import com.bartoszkorec.banking_swift_service.service.SwiftService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,14 +30,14 @@ public class SwiftController {
     }
 
     @PostMapping("/swift-codes")
-    public String addBank(@RequestBody BankDTO bank) {
-
-        return service.addBank(bank);
+    public ResponseEntity<String> addBank(@RequestBody BankDTO bank) {
+        service.addBankToDatabase(bank);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Bank with SWIFT code: " + bank.getSwiftCode() + " added successfully.");
     }
 
     @DeleteMapping("/swift-codes/{swiftCode}")
-    public String deleteBank(@PathVariable String swiftCode) {
-
-        return service.deleteBank(swiftCode.toUpperCase());
+    public ResponseEntity<Void> deleteBank(@PathVariable String swiftCode) {
+        service.deleteBank(swiftCode.toUpperCase());
+        return ResponseEntity.noContent().build();
     }
 }

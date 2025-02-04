@@ -9,7 +9,7 @@ public interface SwiftService {
 
     CountryDTO findByCountryISO2code(String countryISO2code);
 
-    String addBank(BankDTO bank);
+    void addBankToDatabase(BankDTO bank);
 
-    String deleteBank(String swiftCode);
+    void deleteBank(String swiftCode);
 }

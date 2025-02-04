@@ -2,11 +2,10 @@ package com.bartoszkorec.banking_swift_service.integration;
 
 import com.bartoszkorec.banking_swift_service.repository.BranchRepository;
 import com.bartoszkorec.banking_swift_service.repository.HeadquartersRepository;
-import com.bartoszkorec.banking_swift_service.service.SwiftDataProcessorService;
+import com.bartoszkorec.banking_swift_service.service.SwiftFileService;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,10 +14,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.nio.file.Path;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 
 
 @SpringBootTest(properties = {"spring.main.banner-mode=off", "logging.level.root=warn"})
@@ -49,12 +44,12 @@ public class ParsingDataFromTSVFileIT {
     @Value("classpath:invalid-test-data.tsv")
     private Path invalidDataPath;
 
-    private final SwiftDataProcessorService service;
+    private final SwiftFileService service;
     private final BranchRepository branchRepository;
     private final HeadquartersRepository headquartersRepository;
 
     @Autowired
-    public ParsingDataFromTSVFileIT(SwiftDataProcessorService service, BranchRepository branchRepository, HeadquartersRepository headquartersRepository) {
+    public ParsingDataFromTSVFileIT(SwiftFileService service, BranchRepository branchRepository, HeadquartersRepository headquartersRepository) {
         this.service = service;
         this.branchRepository = branchRepository;
         this.headquartersRepository = headquartersRepository;

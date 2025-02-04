@@ -5,5 +5,5 @@ import com.bartoszkorec.banking_swift_service.entity.Location;
 
 public interface LocationService {
 
-    Location processLocation(Location location);
+    Location findOrCreateLocation(Location location);
 }

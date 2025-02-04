@@ -5,7 +5,7 @@ import com.bartoszkorec.banking_swift_service.entity.Country;
 
 public interface CountryService {
 
-    Country processCountry(Country country);
+    Country findOrCreateCountry(Country country);
 
     CountryDTO findByIso2Code(String countryISO2code);
 

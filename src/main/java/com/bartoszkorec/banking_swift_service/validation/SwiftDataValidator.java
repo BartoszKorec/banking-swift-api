@@ -1,5 +1,6 @@
 package com.bartoszkorec.banking_swift_service.validation;
 
+import com.bartoszkorec.banking_swift_service.exception.InvalidFieldsException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -8,43 +9,44 @@ import java.util.List;
 @Slf4j
 public abstract class SwiftDataValidator {
 
-    public static boolean validateFields(String iso2code, String swiftCode, String name, String address, String countryName, boolean isHeadquarters, String lineNumber) {
+    public static void validateFields(String iso2code, String swiftCode, String name, String address, String countryName, boolean isHeadquarters, String lineNumber) {
 
         List<String> missingFields = checkBlankFields(iso2code, swiftCode, name, address, countryName);
         if (!missingFields.isEmpty()) {
+            String message = "Invalid data - missing fields: " + String.join(", ", missingFields);
             if (lineNumber != null) {
-                log.warn("Line {}: Invalid data - missing fields: {}", lineNumber, String.join(", ", missingFields));
+                log.warn("Line {}: {}", lineNumber, message);
             }
-            return false;
+            throw new InvalidFieldsException(message);
         }
 
         if (!validateIso2code(iso2code)) {
+            String message = "Invalid ISO2code: " + iso2code;
             if (lineNumber != null) {
-                log.warn("Line {}: Invalid ISO2 code: {}", lineNumber, iso2code);
+                log.warn("Line {}: {}", lineNumber, message);
             }
-            return false;
+            throw new InvalidFieldsException(message);
         }
 
         if (!validateSwiftCode(swiftCode, isHeadquarters)) {
+            String message = "Invalid SWIFT code: " + swiftCode;
             if (lineNumber != null) {
-                log.warn("Line {}: Invalid SWIFT code: {}", lineNumber, swiftCode);
+                log.warn("Line {}: {}", lineNumber, message);
             }
-            return false;
+            throw new InvalidFieldsException(message);
         }
 
         if (!validateCountryName(countryName)) {
+            String message = "Invalid COUNTRY_NAME: " + countryName;
             if (lineNumber != null) {
-                log.warn("Line {}: Invalid COUNTRY_NAME code: {}", lineNumber, countryName);
+                log.warn("Line {}: {}", lineNumber, message);
             }
-            return false;
+            throw new InvalidFieldsException(message);
         }
-
-        return true;
     }
 
-    public static boolean validateFields(String iso2code, String swiftCode, String name, String address, String countryName, boolean isHeadquarters) {
-
-        return validateFields(iso2code, swiftCode, name, address, countryName, isHeadquarters, null);
+    public static void validateFields(String iso2code, String swiftCode, String name, String address, String countryName, boolean isHeadquarters) {
+        validateFields(iso2code, swiftCode, name, address, countryName, isHeadquarters, null);
     }
 
     private static List<String> checkBlankFields(String... fields) {
@@ -52,7 +54,9 @@ public abstract class SwiftDataValidator {
         List<String> missingFields = new ArrayList<>();
 
         for (int i = 0; i < fields.length; i++) {
-            if (fields[i].isBlank()) {
+            if (fields[i] == null) {
+                missingFields.add(fieldNames[i]);
+            } else if (fields[i].isBlank()) {
                 missingFields.add(fieldNames[i]);
             }
         }

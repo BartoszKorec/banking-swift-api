@@ -18,9 +18,9 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Location processLocation(Location location) {
+    public Location findOrCreateLocation(Location location) {
 
-        location.setCountry(countryService.processCountry(location.getCountry()));
+        location.setCountry(countryService.findOrCreateCountry(location.getCountry()));
         return locationRepository.findByAddressLine(location.getAddressLine())
                 .orElseGet(() -> locationRepository.save(location));
     }

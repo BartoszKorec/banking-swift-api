@@ -29,18 +29,17 @@ public class SwiftDataProcessorImpl implements SwiftDataProcessor {
 
     private void processLine(String[] fields) {
 
-        String iso2Code    = fields[FieldIndex.ISO2CODE.getIndex()].strip();
-        String swiftCode   = fields[FieldIndex.SWIFT_CODE.getIndex()].strip();
-        String bankName    = fields[FieldIndex.BANK_NAME.getIndex()].strip();
-        String address     = fields[FieldIndex.ADDRESS.getIndex()].strip();
-        String countryName = fields[FieldIndex.COUNTRY.getIndex()].strip();
+        String iso2Code    = fields[FieldIndex.ISO2CODE.getIndex()];
+        String swiftCode   = fields[FieldIndex.SWIFT_CODE.getIndex()];
+        String bankName    = fields[FieldIndex.BANK_NAME.getIndex()];
+        String address     = fields[FieldIndex.ADDRESS.getIndex()];
+        String countryName = fields[FieldIndex.COUNTRY.getIndex()];
         String lineNumber  = fields[FieldIndex.LINE_NUMBER.getIndex()];
 
-        BankDTO bankDTO = processData(address, bankName, iso2Code, countryName, swiftCode, lineNumber);
-        if (bankDTO == null) {
-            return;
-        }
-        addBankToMap(bankDTO);
+        try {
+            BankDTO bankDTO = processAndValidateData(address, bankName, iso2Code, countryName, swiftCode, lineNumber);
+            addBankToMap(bankDTO);
+        } catch (IllegalArgumentException ignore) {}
     }
 
     private void addBankToMap(BankDTO bank) {

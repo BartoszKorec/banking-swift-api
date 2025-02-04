@@ -38,14 +38,6 @@ public interface BankMapper {
     @Mapping(source = "countryName", target = "location.country.countryName")
     Headquarters toHeadquartersEntity(BankDTO bankDTO);
 
-    default Object toEntity(BankDTO bankDTO) {
-        if (bankDTO.isHeadquarters()) {
-            return toHeadquartersEntity(bankDTO);
-        } else {
-            return toBranchEntity(bankDTO);
-        }
-    }
-
     @Named("mapSwiftCode")
     default String makeHeadquartersSwiftCode(String branchSwiftCode) {
         return branchSwiftCode.substring(0, 8) + "XXX";

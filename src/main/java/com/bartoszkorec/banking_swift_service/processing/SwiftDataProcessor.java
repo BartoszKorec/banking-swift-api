@@ -12,17 +12,28 @@ public interface SwiftDataProcessor {
 
     void processLines(Stream<String> lines);
 
-    default BankDTO processData(String address, String bankName, String iso2Code, String countryName, String swiftCode, String lineNumber) {
+    default BankDTO processAndValidateData(String address, String bankName, String iso2Code, String countryName, String swiftCode, String lineNumber) {
+
+        address = address.strip().toUpperCase();
+        bankName = bankName.strip().toUpperCase();
+        iso2Code = iso2Code.strip().toUpperCase();
+        countryName = countryName.strip().toUpperCase();
+        swiftCode = swiftCode.strip().toUpperCase();
 
         boolean isHeadquarters = swiftCode.endsWith("XXX");
-        if (!validateFields(iso2Code, swiftCode, bankName, address, countryName, isHeadquarters, lineNumber)) {
-            return null;
-        }
+        validateFields(iso2Code, swiftCode, bankName, address, countryName, isHeadquarters, lineNumber);
         return new BankDTO(address, bankName, iso2Code, countryName, isHeadquarters, swiftCode, isHeadquarters ? new HashSet<>() : null);
     }
 
-    default BankDTO processData(String address, String bankName, String iso2Code, String countryName, String swiftCode) {
-        return processData(address, bankName, iso2Code, countryName, swiftCode, null);
+    default BankDTO processAndValidateBankDTO(BankDTO bankDTO) {
+        return processAndValidateData(
+                bankDTO.getAddress(),
+                bankDTO.getBankName(),
+                bankDTO.getCountryISO2(),
+                bankDTO.getCountryName(),
+                bankDTO.getSwiftCode(),
+                null
+        );
     }
 
     Map<String, BankDTO> getBanks();

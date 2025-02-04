@@ -1,6 +1,7 @@
 package com.bartoszkorec.banking_swift_service.unit.validation;
 
 import com.bartoszkorec.banking_swift_service.dto.BankDTO;
+import com.bartoszkorec.banking_swift_service.exception.InvalidFieldsException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -9,9 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static com.bartoszkorec.banking_swift_service.validation.SwiftDataValidator.validateFields;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("SwiftDataValidator: Invalid bank data validations")
 public class SwiftDataValidatorTest {
@@ -37,29 +36,28 @@ public class SwiftDataValidatorTest {
 
     private static Stream<Arguments> correctBankData() {
         return Stream.of(
-                Arguments.of(new BankDTO("  MONACO, MONACO, 98000", "EDMOND DE ROTHSCHILD-MONACO", "MC", "MONACO", false, "BERLMCMCBDF", null), "correct branch"),
-                Arguments.of(new BankDTO("LES TERRASSES, CARLO 2 AVENUE DE MONTE MONACO", "EDMOND DE ROTHSCHILD-MONACO", "MC", "MONACO", true, "BERLMCMCXXX", null), "correct headquarters")
+                Arguments.of(new BankDTO("VALNU STREET 1  RIGA, RIGA, LV-1050", "NASDAQ CSD SE", "LV", "LATVIA", false, "LCDELV22LVX", null), "correct branch"),
+                Arguments.of(new BankDTO("VALNU STREET 1  RIGA, RIGA, LV-1050", "NASDAQ CSD SE", "LV", "LATVIA", true, "LCDELV22XXX", null), "correct headquarters")
         );
     }
 
-    @ParameterizedTest(name = "Given a bank DTO with {1}, when validating fields, then result should be false")
+    @ParameterizedTest(name = "Given a bank DTO with {1}, when validating fields, then InvalidFieldsException should be thrown")
     @MethodSource("invalidBankData")
-    void shouldReturnFalseForInvalidBankData(BankDTO bankDTO, String invalidScenario) {
-        boolean isValid = validateFields(
+    void shouldThrowExceptionForInvalidBankData(BankDTO bankDTO, String invalidScenario) {
+        assertThrows(InvalidFieldsException.class, () -> validateFields(
                 bankDTO.getCountryISO2(),
                 bankDTO.getSwiftCode(),
                 bankDTO.getBankName(),
                 bankDTO.getAddress(),
                 bankDTO.getCountryName(),
                 bankDTO.isHeadquarters()
-        );
-        assertThat("Expected false for " + invalidScenario, isValid, is(equalTo(false)));
+        ), "Expected InvalidFieldsException for " + invalidScenario);
     }
 
-    @ParameterizedTest(name = "Given a bank DTO with {1}, when validating fields, then result should be true")
+    @ParameterizedTest(name = "Given a bank DTO with {1}, when validating fields, then no exception should be thrown")
     @MethodSource("correctBankData")
-    void shouldReturnTrueForCorrectBankData(BankDTO bankDTO, String correctScenario) {
-        boolean isValid = validateFields(
+    void shouldNotThrowExceptionForCorrectBankData(BankDTO bankDTO, String correctScenario) {
+        validateFields(
                 bankDTO.getCountryISO2(),
                 bankDTO.getSwiftCode(),
                 bankDTO.getBankName(),
@@ -67,6 +65,5 @@ public class SwiftDataValidatorTest {
                 bankDTO.getCountryName(),
                 bankDTO.isHeadquarters()
         );
-        assertThat("Expected true for " + correctScenario, isValid, is(equalTo(true)));
     }
 }

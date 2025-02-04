@@ -3,6 +3,8 @@ package com.bartoszkorec.banking_swift_service.service;
 import com.bartoszkorec.banking_swift_service.dto.BankDTO;
 import com.bartoszkorec.banking_swift_service.entity.Headquarters;
 import com.bartoszkorec.banking_swift_service.entity.Location;
+import com.bartoszkorec.banking_swift_service.exception.BankExistsInDatabaseException;
+import com.bartoszkorec.banking_swift_service.exception.BankNotFoundException;
 import com.bartoszkorec.banking_swift_service.mapper.BankMapper;
 import com.bartoszkorec.banking_swift_service.repository.HeadquartersRepository;
 import jakarta.persistence.NoResultException;
@@ -24,28 +26,30 @@ public class HeadquartersServiceImpl implements HeadquartersService {
     }
 
     @Override
-    public Headquarters processHeadquarters(Headquarters headquarters) {
+    public void addHeadquartersToDatabase(BankDTO headquartersDTO) {
 
-        Location location = locationService.processLocation(headquarters.getLocation());
+        String swiftCode = headquartersDTO.getSwiftCode();
+        if (headquartersRepository.existsById(swiftCode)) {
+            throw new BankExistsInDatabaseException("Cannot add bank to database with swift code: " + swiftCode + ". Bank already exists.");
+        }
+        Headquarters headquarters = bankMapper.toHeadquartersEntity(headquartersDTO);
+        Location location = locationService.findOrCreateLocation(headquarters.getLocation());
         headquarters.setLocation(location);
-        return headquartersRepository.findById(headquarters.getSwiftCode())
-                .orElseGet(() -> headquartersRepository.save(headquarters));
+        headquartersRepository.save(headquarters);
     }
 
     @Override
     public BankDTO findBySwiftCode(String swiftCode) {
         Headquarters headquarters = headquartersRepository.findById(swiftCode)
-                .orElseThrow(() -> new NoResultException("cannot find headquarters with swift code: " + swiftCode));
+                .orElseThrow(() -> new BankNotFoundException("Cannot find bank with swift code: " + swiftCode));
         return bankMapper.toDTO(headquarters);
     }
 
     @Override
-    public BankDTO addHeadquarters(BankDTO bank) {
-        return bankMapper.toDTO(processHeadquarters(bankMapper.toHeadquartersEntity(bank)));
-    }
-
-    @Override
-    public void deleteHeadquarters(String swiftCode) {
+    public void deleteHeadquartersFromDatabase(String swiftCode) {
+        if (!headquartersRepository.existsById(swiftCode)) {
+            throw new BankNotFoundException("Cannot delete bank with swift code: " + swiftCode + ". Bank does not exists in database.");
+        }
         headquartersRepository.deleteById(swiftCode);
     }
 }

@@ -1,14 +1,11 @@
 package com.bartoszkorec.banking_swift_service.service;
 
 import com.bartoszkorec.banking_swift_service.dto.BankDTO;
-import com.bartoszkorec.banking_swift_service.entity.Branch;
 
 public interface BranchService {
-    Branch processBranch(Branch branch);
+    void addBranchDTOToDatabase(BankDTO branchDTO);
 
     BankDTO findBySwiftCode(String swiftCode);
 
-    BankDTO addBranch(BankDTO bank);
-
-    void deleteBranch(String swiftCode);
+    void deleteBranchFromDatabase(String swiftCode);
 }
