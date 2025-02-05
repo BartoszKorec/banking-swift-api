@@ -2,7 +2,7 @@ package com.bartoszkorec.banking_swift_service.rest;
 
 import com.bartoszkorec.banking_swift_service.dto.BankDTO;
 import com.bartoszkorec.banking_swift_service.dto.CountryDTO;
-import com.bartoszkorec.banking_swift_service.service.SwiftService;
+import com.bartoszkorec.banking_swift_service.service.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1")
 public class SwiftController {
 
-    private final SwiftService service;
+    private final BankService service;
 
     @Autowired
-    public SwiftController(SwiftService service) {
+    public SwiftController(BankService service) {
         this.service = service;
     }
 

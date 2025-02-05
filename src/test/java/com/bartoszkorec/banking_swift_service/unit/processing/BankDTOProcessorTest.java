@@ -9,7 +9,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 //@ContextConfiguration(classes = {SwiftFileProcessor.class})
-public class SwiftDataValidatorAndProcessorTest {
+public class BankDTOProcessorTest {
 
 
 //    @Autowired

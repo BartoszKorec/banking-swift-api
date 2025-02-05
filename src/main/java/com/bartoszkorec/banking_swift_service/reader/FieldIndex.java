@@ -1,4 +1,4 @@
-package com.bartoszkorec.banking_swift_service.processing;
+package com.bartoszkorec.banking_swift_service.reader;
 
 import lombok.Getter;
 
@@ -9,8 +9,7 @@ public enum FieldIndex {
     SWIFT_CODE(1),
     BANK_NAME(3),
     ADDRESS(4),
-    COUNTRY(6),
-    LINE_NUMBER(8);
+    COUNTRY(6);
 
     private final int index;
 
