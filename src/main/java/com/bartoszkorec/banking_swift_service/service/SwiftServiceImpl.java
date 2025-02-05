@@ -4,7 +4,7 @@ import com.bartoszkorec.banking_swift_service.dto.BankDTO;
 import com.bartoszkorec.banking_swift_service.dto.CountryDTO;
 import com.bartoszkorec.banking_swift_service.exception.BankNotFoundException;
 import com.bartoszkorec.banking_swift_service.exception.CountryNotFoundException;
-import com.bartoszkorec.banking_swift_service.processing.SwiftDataProcessor;
+import com.bartoszkorec.banking_swift_service.processing.SwiftDataValidatorAndProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,20 +14,18 @@ public class SwiftServiceImpl implements SwiftService {
     private final HeadquartersService headquartersService;
     private final BranchService branchService;
     private final CountryService countryService;
-    private final SwiftDataProcessor processor;
 
     @Autowired
-    public SwiftServiceImpl(HeadquartersService headquartersService, BranchService branchService, CountryService countryService, SwiftDataProcessor processor) {
+    public SwiftServiceImpl(HeadquartersService headquartersService, BranchService branchService, CountryService countryService) {
         this.headquartersService = headquartersService;
         this.branchService = branchService;
         this.countryService = countryService;
-        this.processor = processor;
     }
 
     @Override
     public BankDTO findBySwiftCode(String swiftCode) {
 
-        swiftCode = processor.safeTrimAndUpperCase(swiftCode, "SWIFT code is null");
+        swiftCode = SwiftDataValidatorAndProcessor.safeTrim(swiftCode, true, "SWIFT code is blank or null");
         BankDTO bankDTO;
         try {
             bankDTO = headquartersService.findBySwiftCode(swiftCode);
@@ -44,7 +42,7 @@ public class SwiftServiceImpl implements SwiftService {
 
     @Override
     public CountryDTO findByCountryISO2code(String countryISO2code) {
-        countryISO2code = processor.safeTrimAndUpperCase(countryISO2code, "Country ISO2 code is nul");
+        countryISO2code = SwiftDataValidatorAndProcessor.safeTrim(countryISO2code, true, "Country ISO2 code is blank or null");
         CountryDTO countryDTO;
         try {
             countryDTO = countryService.findByIso2Code(countryISO2code);
@@ -57,21 +55,18 @@ public class SwiftServiceImpl implements SwiftService {
     @Override
     public void addBankToDatabase(BankDTO bank) {
 
-        String swiftCode = processor.safeTrimAndUpperCase(bank.getSwiftCode(), "SWIFT code is null");
-        bank.setCountryName(processor.safeTrimAndUpperCase(bank.getCountryName(), "Country name is null is null"));
-        bank.setCountryISO2(processor.safeTrimAndUpperCase(bank.getCountryISO2(), "Country ISO2 code is null"));
-        bank.setSwiftCode(swiftCode);
-
-        if (swiftCode.endsWith("XXX")) {
-            headquartersService.addHeadquartersToDatabase(bank);
+        String swiftCode = SwiftDataValidatorAndProcessor.safeTrim(bank.getSwiftCode(), true, "SWIFT code is blank or null");
+        bank.setHeadquarters(swiftCode.endsWith("XXX"));
+        if (bank.isHeadquarters()) {
+            headquartersService.addHeadquartersToDatabase(SwiftDataValidatorAndProcessor.processAndValidateBankDTO(bank));
         } else {
-            branchService.addBranchDTOToDatabase(bank);
+            branchService.addBranchDTOToDatabase(SwiftDataValidatorAndProcessor.processAndValidateBankDTO(bank));
         }
     }
 
     @Override
     public void deleteBank(String swiftCode) {
-        swiftCode = processor.safeTrimAndUpperCase(swiftCode, "SWIFT code is null");
+        swiftCode = SwiftDataValidatorAndProcessor.safeTrim(swiftCode, true, "SWIFT code is blank or null");
         if (swiftCode.endsWith("XXX")) {
             headquartersService.deleteHeadquartersFromDatabase(swiftCode);
         } else {

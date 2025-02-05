@@ -8,7 +8,7 @@ import com.bartoszkorec.banking_swift_service.exception.BankExistsInDatabaseExce
 import com.bartoszkorec.banking_swift_service.exception.BankNotFoundException;
 import com.bartoszkorec.banking_swift_service.exception.CorrespondingHeadquartersNotFoundException;
 import com.bartoszkorec.banking_swift_service.mapper.BankMapper;
-import com.bartoszkorec.banking_swift_service.processing.SwiftDataProcessor;
+import com.bartoszkorec.banking_swift_service.processing.SwiftDataValidatorAndProcessor;
 import com.bartoszkorec.banking_swift_service.repository.BranchRepository;
 import com.bartoszkorec.banking_swift_service.repository.HeadquartersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,21 +21,17 @@ public class BranchServiceImpl implements BranchService {
     private final LocationService locationService;
     private final HeadquartersRepository headquartersRepository;
     private final BankMapper bankMapper;
-    private final SwiftDataProcessor processor;
 
     @Autowired
-    public BranchServiceImpl(BranchRepository branchRepository, LocationService locationService, HeadquartersRepository headquartersRepository, BankMapper bankMapper, SwiftDataProcessor processor) {
+    public BranchServiceImpl(BranchRepository branchRepository, LocationService locationService, HeadquartersRepository headquartersRepository, BankMapper bankMapper) {
         this.branchRepository = branchRepository;
         this.locationService = locationService;
         this.headquartersRepository = headquartersRepository;
         this.bankMapper = bankMapper;
-        this.processor = processor;
     }
 
     @Override
     public void addBranchDTOToDatabase(BankDTO branchDTO) {
-
-        branchDTO = processor.processAndValidateBranchDTO(branchDTO);
 
         String swiftCode = branchDTO.getSwiftCode();
         if (branchRepository.existsById(swiftCode)) {

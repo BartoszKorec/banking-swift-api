@@ -7,12 +7,13 @@ import com.bartoszkorec.banking_swift_service.exception.BankExistsInDatabaseExce
 import com.bartoszkorec.banking_swift_service.exception.BankNotFoundException;
 import com.bartoszkorec.banking_swift_service.exception.InvalidBranchException;
 import com.bartoszkorec.banking_swift_service.mapper.BankMapper;
-import com.bartoszkorec.banking_swift_service.processing.SwiftDataProcessor;
+import com.bartoszkorec.banking_swift_service.processing.SwiftDataValidatorAndProcessor;
 import com.bartoszkorec.banking_swift_service.repository.HeadquartersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class HeadquartersServiceImpl implements HeadquartersService {
@@ -21,30 +22,32 @@ public class HeadquartersServiceImpl implements HeadquartersService {
     private final LocationService locationService;
     private final BankMapper bankMapper;
     private final BranchService branchService;
-    private final SwiftDataProcessor processor;
 
     @Autowired
-    public HeadquartersServiceImpl(HeadquartersRepository headquartersRepository, LocationService locationService, BankMapper bankMapper, BranchService branchService, SwiftDataProcessor processor) {
+    public HeadquartersServiceImpl(HeadquartersRepository headquartersRepository, LocationService locationService, BankMapper bankMapper, BranchService branchService) {
         this.headquartersRepository = headquartersRepository;
         this.locationService = locationService;
         this.bankMapper = bankMapper;
         this.branchService = branchService;
-        this.processor = processor;
     }
 
     @Override
     public void addHeadquartersToDatabase(BankDTO headquartersDTO) {
 
-        headquartersDTO = processor.processAndValidateHeadquartersDTO(headquartersDTO);
-        Set<BankDTO> branches = headquartersDTO.getBranches();
-        try {
-            branches.forEach(processor::processAndValidateBranchDTO);
-        } catch (InvalidBranchException e) {
-            throw new InvalidBranchException("Invalid branch in headquarters with SWIFT code: " + headquartersDTO.getSwiftCode() + ". " + e.getMessage());
-        }
         String swiftCode = headquartersDTO.getSwiftCode();
         if (headquartersRepository.existsById(swiftCode)) {
             throw new BankExistsInDatabaseException("Cannot add bank to database with swift code: " + swiftCode + ". Bank already exists.");
+        }
+
+        Set<BankDTO> branches = headquartersDTO.getBranches();
+        try {
+            if (branches != null) {
+                branches = headquartersDTO.getBranches().stream()
+                        .map(SwiftDataValidatorAndProcessor::processAndValidateBankDTO)
+                        .collect(Collectors.toSet());
+            }
+        } catch (InvalidBranchException e) {
+            throw new InvalidBranchException("Invalid branch in headquarters with SWIFT code: " + headquartersDTO.getSwiftCode() + ". " + e.getMessage());
         }
 
         Headquarters headquarters = bankMapper.toHeadquartersEntity(headquartersDTO);
@@ -56,12 +59,14 @@ public class HeadquartersServiceImpl implements HeadquartersService {
         headquarters.setBranches(null);
         headquartersRepository.save(headquarters);
 
-        branches.forEach(branch -> {
-            try {
-                branchService.addBranchDTOToDatabase(branch);
-            } catch (BankExistsInDatabaseException ignore) {
-            } // conflicts will be ignored
-        });
+        if (branches != null) {
+            branches.forEach(branch -> {
+                try {
+                    branchService.addBranchDTOToDatabase(branch);
+                } catch (BankExistsInDatabaseException ignore) {
+                } // conflicts will be ignored
+            });
+        }
     }
 
     @Override
@@ -78,4 +83,5 @@ public class HeadquartersServiceImpl implements HeadquartersService {
         }
         headquartersRepository.deleteById(swiftCode);
     }
+
 }
