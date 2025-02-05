@@ -1,13 +1,13 @@
 package com.bartoszkorec.banking_swift_service.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -22,5 +22,8 @@ public class Country {
 
     @Column(name = "country_name", nullable = false, length = Integer.MAX_VALUE)
     private String countryName;
+
+    @OneToMany(mappedBy = "country")
+    private Set<Location> locations = new HashSet<>();
 
 }

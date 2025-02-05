@@ -51,7 +51,7 @@ public class BankMapperTest {
         bankDTO.setSwiftCode("12345678ABC");
 
         // When
-        branch = (Branch) bankMapper.toEntity(bankDTO);
+        branch = bankMapper.toBranchEntity(bankDTO);
 
         // Then
         assertThat(branch.getHeadquarters().getSwiftCode(), is(equalTo("12345678XXX")));
