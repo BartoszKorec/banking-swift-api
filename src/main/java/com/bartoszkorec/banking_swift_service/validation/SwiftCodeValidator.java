@@ -3,8 +3,8 @@ package com.bartoszkorec.banking_swift_service.validation;
 import com.bartoszkorec.banking_swift_service.exception.InvalidFieldsException;
 import org.springframework.stereotype.Component;
 
-import static com.bartoszkorec.banking_swift_service.util.LoggerHelper.logWarning;
 import static com.bartoszkorec.banking_swift_service.util.FieldValidator.validateAndTrim;
+import static com.bartoszkorec.banking_swift_service.util.LoggerHelper.logWarning;
 
 @Component
 public class SwiftCodeValidator implements FieldValidator {

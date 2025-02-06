@@ -6,6 +6,7 @@ import com.bartoszkorec.banking_swift_service.entity.Headquarters;
 import com.bartoszkorec.banking_swift_service.exception.*;
 import com.bartoszkorec.banking_swift_service.mapper.BankMapper;
 import com.bartoszkorec.banking_swift_service.processor.BankDTOProcessor;
+import com.bartoszkorec.banking_swift_service.processor.EntityProcessor;
 import com.bartoszkorec.banking_swift_service.repository.HeadquartersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,16 @@ import java.util.stream.Collectors;
 public class HeadquartersServiceImpl implements HeadquartersService {
 
     private final HeadquartersRepository headquartersRepository;
-    private final BankMapper bankMapper;
     private final BankDTOProcessor bankDTOProcessor;
+    private final EntityProcessor entityProcessor;
+    private final BankMapper bankMapper;
 
     @Autowired
-    public HeadquartersServiceImpl(HeadquartersRepository headquartersRepository, BankMapper bankMapper, BankDTOProcessor bankDTOProcessor) {
+    public HeadquartersServiceImpl(HeadquartersRepository headquartersRepository, BankMapper bankMapper, BankDTOProcessor bankDTOProcessor, EntityProcessor entityProcessor) {
         this.headquartersRepository = headquartersRepository;
         this.bankMapper = bankMapper;
         this.bankDTOProcessor = bankDTOProcessor;
+        this.entityProcessor = entityProcessor;
     }
 
     @Override
@@ -41,7 +44,7 @@ public class HeadquartersServiceImpl implements HeadquartersService {
             throw new BankExistsInDatabaseException("Cannot add bank to database with swift code: " + swiftCode + ". Bank already exists.");
         }
 
-        Headquarters headquarters = bankMapper.toHeadquartersEntity(headquartersDTO);
+        Headquarters headquarters = entityProcessor.processHeadquarters(headquartersDTO);
 
         Set<Branch> validatedBranches = Collections.emptySet();
         try {
@@ -49,7 +52,7 @@ public class HeadquartersServiceImpl implements HeadquartersService {
                 validatedBranches = headquartersDTO.getBranches().stream()
                         .map(bankDTOProcessor::processBankDTO)
                         .filter(b -> !b.isHeadquarters()) // Filter branches that are incorrectly marked as headquarters
-                        .map(bankMapper::toBranchEntity)
+                        .map(entityProcessor::processBranch)
                         .collect(Collectors.toSet());
             }
         } catch (InvalidFieldsException e) {
