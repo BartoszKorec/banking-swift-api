@@ -2,6 +2,7 @@ package com.bartoszkorec.banking_swift_service.unit.validation;
 
 import com.bartoszkorec.banking_swift_service.exception.InvalidFieldsException;
 import com.bartoszkorec.banking_swift_service.validation.CountryCodeValidator;
+import com.bartoszkorec.banking_swift_service.validation.FieldValidator;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -11,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CountryCodeValidatorTest {
 
-    private final CountryCodeValidator validator = new CountryCodeValidator();
+    private final FieldValidator validator = new CountryCodeValidator();
 
     @ParameterizedTest(name = "Given input \"{0}\", then the validated country code is \"{2}\"")
     @CsvSource({

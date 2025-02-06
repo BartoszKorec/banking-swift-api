@@ -1,76 +1,53 @@
 package com.bartoszkorec.banking_swift_service.unit.processing;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import com.bartoszkorec.banking_swift_service.dto.BankDTO;
+import com.bartoszkorec.banking_swift_service.processor.BankDTOProcessor;
+import com.bartoszkorec.banking_swift_service.validation.CountryCodeValidator;
+import com.bartoszkorec.banking_swift_service.validation.CountryNameValidator;
+import com.bartoszkorec.banking_swift_service.validation.SwiftCodeValidator;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-//import static org.hamcrest.MatcherAssert.assertThat;
-//import static org.hamcrest.Matchers.hasKey;
-//import static org.hamcrest.Matchers.not;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
-@ExtendWith(SpringExtension.class)
-//@ContextConfiguration(classes = {SwiftFileProcessor.class})
-public class BankDTOProcessorTest {
+class BankDTOProcessorTest {
 
+    private final BankDTOProcessor processor = new BankDTOProcessor(new CountryCodeValidator(), new CountryNameValidator(), new SwiftCodeValidator());
+    private BankDTO bankDTO;
 
-//    @Autowired
-//    private SwiftDataValidatorAndProcessor processor;
-//
-//    private Stream<String> correctData;
-//    private Stream<String> badData;
-//
-//    @BeforeEach
-//    void setUp() {
-//        correctData = Stream.of(
-//                // Valid branch with corresponding HQ
-//                "MC\tBERLMCMCBDF\tBIC11\tEDMOND DE ROTHSCHILD-MONACO\tMONACO, MONACO, 98000\tMONACO\tMONACO\tEurope/Monaco",
-//                "MC\tBERLMCMCXXX\tBIC11\tEDMOND DE ROTHSCHILD-MONACO\tLES TERRASSES, MONACO, MONACO, 98000\tMONACO\tMONACO\tEurope/Monaco"
-//        );
-//
-//        badData = Stream.of(
-//                // Invalid due to blank fields
-//                "   \tAIZKLV22CLN\tBIC11\tABLV BANK, AS IN LIQUIDATION\tELIZABETES STREET 23, RIGA, LV-1010\tRIGA\tLATVIA\tEurope/Riga",
-//                "LV\t   \tBIC11\tABLV BANK, AS IN LIQUIDATION\tELIZABETES STREET 23, RIGA, LV-1010\tRIGA\tLATVIA\tEurope/Riga",
-//                "LV\tAIZKLV22CLN\tBIC11\t   \tELIZABETES STREET 23, RIGA, LV-1010\tRIGA\tLATVIA\tEurope/Riga",
-//                "LV\tAIZKLV22CLN\tBIC11\tABLV BANK, AS IN LIQUIDATION\t   \tRIGA\tLATVIA\tEurope/Riga",
-//                "LV\tAIZKLV22CLN\tBIC11\tABLV BANK, AS IN LIQUIDATION\tELIZABETES STREET 23, RIGA, LV-1010\tRIGA\t  \tEurope/Riga",
-//
-//                // Invalid ISO2 code cases
-//                "11\tAIZKLV22CLN\tBIC11\tABLV BANK, AS IN LIQUIDATION\tELIZABETES STREET 23, RIGA, LV-1010\tRIGA\tLATVIA\tEurope/Riga",
-//                "L\tAIZKLV22CLN\tBIC11\tABLV BANK, AS IN LIQUIDATION\tELIZABETES STREET 23, RIGA, LV-1010\tRIGA\tLATVIA\tEurope/Riga",
-//                "lv\tAIZKLV22CLN\tBIC11\tABLV BANK, AS IN LIQUIDATION\tELIZABETES STREET 23, RIGA, LV-1010\tRIGA\tLATVIA\tEurope/Riga",
-//
-//                // Invalid country names
-//                "LV\tAIZKLV22CLN\tBIC11\tABLV BANK, AS IN LIQUIDATION\tELIZABETES STREET 23, RIGA, LV-1010\tRIGA\tLatvia\tEurope/Riga",
-//                "LV\tAIZKLV22CLN\tBIC11\tABLV BANK, AS IN LIQUIDATION\tELIZABETES STREET 23, RIGA, LV-1010\tRIGA\tLATVIA123\tEurope/Riga",
-//
-//                // Invalid SWIFT codes
-//                "LV\tAIZKLV2XXX\tBIC11\tABLV BANK, AS IN LIQUIDATION\tMIHAILA TALA STREET 1, RIGA, LV-1045\tRIGA\tLATVIA\tEurope/Riga", // 10 chars
-//                "LV\tAIZKLV22CLN1\tBIC11\tABLV BANK, AS IN LIQUIDATION\tMIHAILA TALA STREET 1, RIGA, LV-1045\tRIGA\tLATVIA\tEurope/Riga", // 12 chars
-//                "LV\tAIZklv22CLN\tBIC11\tABLV BANK, AS IN LIQUIDATION\tMIHAILA TALA STREET 1, RIGA, LV-1045\tRIGA\tLATVIA\tEurope/Riga" // Lowercase SWIFT
-//        );
-//    }
-//
-//    @Test
-//    void shouldStoreCorrectBankData() {
-//        // When
-//        processor.processLines(correctData);
-//
-//        // Then
-//        assertThat(processor.getBanks(), hasKey("BERLMCMCBDF"));
-//        assertThat(processor.getBanks(), hasKey("BERLMCMCXXX"));
-//    }
-//
-//    @Test
-//    void shouldNotStoreInvalidBankData() {
-//        // When
-//        processor.processLines(badData);
-//
-//        // Then
-//        assertThat(processor.getBanks(), not(hasKey("")));
-//        assertThat(processor.getBanks(), not(hasKey("   ")));
-//        assertThat(processor.getBanks(), not(hasKey("AIZKLV22CLN")));
-//        assertThat(processor.getBanks(), not(hasKey("AIZKLV2XXX")));
-//        assertThat(processor.getBanks(), not(hasKey("AIZKLV22CLN1")));
-//        assertThat(processor.getBanks(), not(hasKey("AIZklv22CLN")));
-//    }
+    @BeforeEach
+    void setUp() {
+        bankDTO = BankDTO.builder()
+                .address(" some address ")
+                .bankName(" some bank ")
+                .countryISO2(" lv ")
+                .countryName(" latvia ")
+                .build();
+    }
+
+    @Test
+    void shouldMarkAsHeadquartersAndCreateBranches() {
+        // Given
+        bankDTO.setSwiftCode("12345678XXX");
+        // When
+        BankDTO result = processor.processBankDTO(bankDTO);
+
+        // Then
+        assertThat(result.isHeadquarters(), is(equalTo(true)));
+        assertThat(result.getBranches(), is(emptyCollectionOf(BankDTO.class)));
+    }
+
+    @Test
+    void shouldNotMarkAsHeadquartersAndNullifyBranches() {
+        // Given
+        bankDTO.setSwiftCode("12345678AAA");
+
+        // When
+        BankDTO result = processor.processBankDTO(bankDTO);
+
+        // Then
+        assertThat(result.isHeadquarters(), is(equalTo(false)));
+        assertThat(result.getBranches(), is(nullValue()));
+    }
 }

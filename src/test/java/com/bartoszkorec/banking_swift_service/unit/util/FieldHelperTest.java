@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-public class FieldHelperTest {
+class FieldHelperTest {
 
 
     @ParameterizedTest(name = "when input is \"{0}\" and toUpperCase is {1} then result should be \"{2}\"")

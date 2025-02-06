@@ -1,6 +1,7 @@
 package com.bartoszkorec.banking_swift_service.unit.validation;
 
 import com.bartoszkorec.banking_swift_service.exception.InvalidFieldsException;
+import com.bartoszkorec.banking_swift_service.validation.FieldValidator;
 import com.bartoszkorec.banking_swift_service.validation.SwiftCodeValidator;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -11,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SwiftCodeValidatorTest {
 
-    private final SwiftCodeValidator validator = new SwiftCodeValidator();
+    private final FieldValidator validator = new SwiftCodeValidator();
 
     @ParameterizedTest(name = "Given input \"{0}\" and line number {1}, then the validated SWIFT code should be \"{2}\"")
     @CsvSource({
