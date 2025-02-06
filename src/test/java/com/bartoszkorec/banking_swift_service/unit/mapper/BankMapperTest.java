@@ -12,7 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-public class BankMapperTest {
+class BankMapperTest {
 
     private final BankMapper bankMapper = Mappers.getMapper(BankMapper.class);
     private Branch branch;
