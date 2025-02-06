@@ -8,7 +8,7 @@ import com.bartoszkorec.banking_swift_service.processor.BankDTOProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.bartoszkorec.banking_swift_service.util.FieldValidator.validateAndTrim;
+import static com.bartoszkorec.banking_swift_service.util.FieldHelper.validateAndTrim;
 
 @Service
 public class BankServiceImpl implements BankService {
