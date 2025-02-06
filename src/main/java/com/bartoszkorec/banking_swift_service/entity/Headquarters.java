@@ -27,11 +27,11 @@ public class Headquarters {
     @Column(name = "name", nullable = false, length = Integer.MAX_VALUE)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade =  {CascadeType.PERSIST, CascadeType.MERGE})
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "location_id", nullable = false)
     private Location location;
 
-    @OneToMany(mappedBy = "headquarters")
+    @OneToMany(mappedBy = "headquarters", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Branch> branches = new HashSet<>();
 }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 
-import static com.bartoszkorec.banking_swift_service.util.FieldValidator.validateAndTrim;
+import static com.bartoszkorec.banking_swift_service.util.FieldHelper.validateAndTrim;
 
 @Component
 public class BankDTOProcessor {

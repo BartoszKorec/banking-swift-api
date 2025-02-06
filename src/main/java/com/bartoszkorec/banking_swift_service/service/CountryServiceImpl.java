@@ -34,8 +34,4 @@ public class CountryServiceImpl implements CountryService {
         return countryMapper.toDTO(country);
     }
 
-    @Override
-    public boolean isDatabaseEmpty() {
-        return countryRepository.count() == 0L;
-    }
 }

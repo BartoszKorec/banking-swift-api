@@ -2,38 +2,29 @@ package com.bartoszkorec.banking_swift_service.service;
 
 import com.bartoszkorec.banking_swift_service.dto.BankDTO;
 import com.bartoszkorec.banking_swift_service.dto.CountryDTO;
-import com.bartoszkorec.banking_swift_service.exception.*;
-import com.bartoszkorec.banking_swift_service.reader.TSVRecordsProcessor;
-import com.bartoszkorec.banking_swift_service.reader.TSVFileReader;
+import com.bartoszkorec.banking_swift_service.exception.BankNotFoundException;
+import com.bartoszkorec.banking_swift_service.exception.CountryNotFoundException;
 import com.bartoszkorec.banking_swift_service.processor.BankDTOProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Path;
-import java.util.Comparator;
-
-import static com.bartoszkorec.banking_swift_service.util.FieldValidator.*;
-import static com.bartoszkorec.banking_swift_service.util.LoggerHelper.*;
+import static com.bartoszkorec.banking_swift_service.util.FieldHelper.validateAndTrim;
 
 @Service
 public class BankServiceImpl implements BankService {
 
-    @Value("${swift.file.path}")
-    private String filePath;
+
     private final HeadquartersService headquartersService;
     private final BranchService branchService;
     private final CountryService countryService;
     private final BankDTOProcessor bankDTOProcessor;
-    private final TSVRecordsProcessor parse;
 
     @Autowired
-    public BankServiceImpl(HeadquartersService headquartersService, BranchService branchService, CountryService countryService, BankDTOProcessor bankDTOProcessor, TSVRecordsProcessor parse) {
+    public BankServiceImpl(HeadquartersService headquartersService, BranchService branchService, CountryService countryService, BankDTOProcessor bankDTOProcessor) {
         this.headquartersService = headquartersService;
         this.branchService = branchService;
         this.countryService = countryService;
         this.bankDTOProcessor = bankDTOProcessor;
-        this.parse = parse;
     }
 
     @Override
@@ -84,29 +75,6 @@ public class BankServiceImpl implements BankService {
             headquartersService.deleteHeadquartersFromDatabase(swiftCode);
         } else {
             branchService.deleteBranchFromDatabase(swiftCode);
-        }
-    }
-
-    @Override
-    public void afterSingletonsInstantiated() {
-
-        if (countryService.isDatabaseEmpty()) {
-            try {
-                parse.convertLinesToBankDTOs(TSVFileReader.readTSVFile(filePath))
-                        .sorted(Comparator.comparing(BankDTO::isHeadquarters).reversed())
-                        .forEach(bankDTO -> {
-                            try {
-                                addBankToDatabase(bankDTO);
-                            } catch (InvalidHeadquartersException | InvalidBranchException |
-                                     CorrespondingHeadquartersNotFoundException e) {
-                                logWarning(e.getMessage());
-                            }
-                        });
-                logInfo("file " + Path.of(filePath).getFileName() + " processed successfully");
-            } catch (FileException e) {
-                logError(e.getMessage() + ". Aborting...");
-                throw new FileException(e.getMessage());
-            }
         }
     }
 }

@@ -10,13 +10,12 @@
     </parent>
     <groupId>com.bartoszkorec</groupId>
     <artifactId>banking-swift-service</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>banking-swift-service</name>
     <description>Spring Boot REST API for managing and retrieving SWIFT codes stored in a PostgresSQL database
     </description>
     <url>https://github.com/BartoszKorec/banking-swift-api</url>
 
-    <!-- License Information -->
     <licenses>
         <license>
             <name>MIT License</name>
@@ -25,7 +24,6 @@
         </license>
     </licenses>
 
-    <!-- Developer Information -->
     <developers>
         <developer>
             <id>bartoszkorec</id>
@@ -34,7 +32,6 @@
         </developer>
     </developers>
 
-    <!-- SCM Information -->
     <scm>
         <connection>scm:git:git://github.com/BartoszKorec/banking-swift-api.git</connection>
         <developerConnection>scm:git:ssh://github.com:BartoszKorec/banking-swift-api.git</developerConnection>
@@ -80,6 +77,11 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -132,6 +134,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <image>
+                        <name>bartoszkorec/banking-swift-service:${project.version}:latest</name>
+                    </image>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

@@ -4,7 +4,7 @@ import com.bartoszkorec.banking_swift_service.exception.InvalidFieldsException;
 
 import static com.bartoszkorec.banking_swift_service.util.LoggerHelper.logWarning;
 
-public abstract class FieldValidator {
+public abstract class FieldHelper {
 
     public static String validateAndTrim(String value, boolean toUpperCase, String fieldName) {
         return validateAndTrim(value, toUpperCase, fieldName, -1);

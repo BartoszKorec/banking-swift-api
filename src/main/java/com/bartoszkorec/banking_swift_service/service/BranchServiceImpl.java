@@ -2,31 +2,32 @@ package com.bartoszkorec.banking_swift_service.service;
 
 import com.bartoszkorec.banking_swift_service.dto.BankDTO;
 import com.bartoszkorec.banking_swift_service.entity.Branch;
-import com.bartoszkorec.banking_swift_service.entity.Headquarters;
-import com.bartoszkorec.banking_swift_service.entity.Location;
-import com.bartoszkorec.banking_swift_service.exception.*;
+import com.bartoszkorec.banking_swift_service.exception.BankExistsInDatabaseException;
+import com.bartoszkorec.banking_swift_service.exception.BankNotFoundException;
+import com.bartoszkorec.banking_swift_service.exception.CorrespondingHeadquartersNotFoundException;
+import com.bartoszkorec.banking_swift_service.exception.InvalidBranchException;
 import com.bartoszkorec.banking_swift_service.mapper.BankMapper;
+import com.bartoszkorec.banking_swift_service.processor.EntityProcessor;
 import com.bartoszkorec.banking_swift_service.repository.BranchRepository;
 import com.bartoszkorec.banking_swift_service.repository.HeadquartersRepository;
 import jakarta.persistence.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BranchServiceImpl implements BranchService {
 
     private final BranchRepository branchRepository;
-    private final LocationService locationService;
-    private final BankMapper bankMapper;
     private final HeadquartersRepository headquartersRepository;
+    private final EntityProcessor entityProcessor;
+    private final BankMapper bankMapper;
 
     @Autowired
-    public BranchServiceImpl(BranchRepository branchRepository, LocationService locationService, BankMapper bankMapper, HeadquartersRepository headquartersRepository) {
+    public BranchServiceImpl(BranchRepository branchRepository, HeadquartersRepository headquartersRepository, EntityProcessor entityProcessor, BankMapper bankMapper) {
         this.branchRepository = branchRepository;
-        this.locationService = locationService;
-        this.bankMapper = bankMapper;
+        this.entityProcessor = entityProcessor;
         this.headquartersRepository = headquartersRepository;
+        this.bankMapper = bankMapper;
     }
 
     @Override
@@ -45,9 +46,7 @@ public class BranchServiceImpl implements BranchService {
         }
 
         try {
-            Branch branch = bankMapper.toBranchEntity(branchDTO);
-            Location location = locationService.findOrCreateLocation(branch.getLocation());
-            branch.setLocation(location);
+            Branch branch = entityProcessor.processBranch(branchDTO);
             branchRepository.save(branch);
         } catch (PersistenceException e) {
             throw new InvalidBranchException("Database error encountered when adding branch with SWIFT code: " + swiftCode);

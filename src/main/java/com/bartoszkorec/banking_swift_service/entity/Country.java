@@ -23,7 +23,7 @@ public class Country {
     @Column(name = "country_name", nullable = false, length = Integer.MAX_VALUE)
     private String countryName;
 
-    @OneToMany(mappedBy = "country")
+    @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Location> locations = new HashSet<>();
 
 }

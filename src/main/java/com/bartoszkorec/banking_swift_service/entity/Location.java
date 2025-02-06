@@ -28,14 +28,14 @@ public class Location {
     @Column(name = "address_line", nullable = false, length = Integer.MAX_VALUE)
     private String addressLine;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.PERSIST)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "iso2_code", nullable = false)
     private Country country;
 
-    @OneToMany(mappedBy = "location")
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Branch> branches = new HashSet<>();
 
-    @OneToMany(mappedBy = "location")
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Headquarters> headquarters = new HashSet<>();
 }

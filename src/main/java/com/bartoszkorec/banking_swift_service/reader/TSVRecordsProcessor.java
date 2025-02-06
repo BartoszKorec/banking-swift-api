@@ -6,7 +6,10 @@ import com.bartoszkorec.banking_swift_service.processor.BankDTOProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static com.bartoszkorec.banking_swift_service.util.LoggerHelper.logWarning;
@@ -37,9 +40,9 @@ public class TSVRecordsProcessor {
                     record.fields()[FieldIndex.BANK_NAME.getIndex()],
                     record.fields()[FieldIndex.ISO2CODE.getIndex()],
                     record.fields()[FieldIndex.COUNTRY.getIndex()],
-                    false, // isHeadquarters will be set in validateBank method
+                    record.fields()[FieldIndex.SWIFT_CODE.getIndex()].endsWith("XXX"),
                     record.fields()[FieldIndex.SWIFT_CODE.getIndex()],
-                    null // branches will be set in validateBank method
+                    Collections.emptySet()
             ), record.lineNumber());
         } catch (InvalidFieldsException ignore) {
             return;
