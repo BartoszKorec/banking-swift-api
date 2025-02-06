@@ -6,7 +6,6 @@ import com.bartoszkorec.banking_swift_service.entity.Headquarters;
 import com.bartoszkorec.banking_swift_service.exception.InvalidHeadquartersException;
 import com.bartoszkorec.banking_swift_service.processor.EntityProcessor;
 import com.bartoszkorec.banking_swift_service.repository.HeadquartersRepository;
-import com.bartoszkorec.banking_swift_service.service.CountryService;
 import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,14 +30,12 @@ public class ParseDTOsToDatabase implements SmartInitializingSingleton {
     private String filePath;
     private final TSVRecordsProcessor parse;
     private final Map<String, Headquarters> headquartersMap = new HashMap<>();
-    private final CountryService countryService;
     private final HeadquartersRepository headquartersRepository;
     private final EntityProcessor entityProcessor;
 
     @Autowired
-    public ParseDTOsToDatabase(TSVRecordsProcessor parse, CountryService countryService, HeadquartersRepository headquartersRepository, EntityProcessor entityProcessor, Environment environment) {
+    public ParseDTOsToDatabase(TSVRecordsProcessor parse, HeadquartersRepository headquartersRepository, EntityProcessor entityProcessor, Environment environment) {
         this.parse = parse;
-        this.countryService = countryService;
         this.headquartersRepository = headquartersRepository;
         this.entityProcessor = entityProcessor;
         this.environment = environment;
@@ -81,7 +78,7 @@ public class ParseDTOsToDatabase implements SmartInitializingSingleton {
             return;
         }
 
-        if (countryService.isDatabaseEmpty()) {
+        if (headquartersRepository.count() == 0L) {
             addDataToDatabase();
         }
     }
