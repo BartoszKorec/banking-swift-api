@@ -17,14 +17,12 @@ import org.springframework.stereotype.Service;
 public class BranchServiceImpl implements BranchService {
 
     private final BranchRepository branchRepository;
-    private final LocationService locationService;
     private final BankMapper bankMapper;
     private final HeadquartersRepository headquartersRepository;
 
     @Autowired
-    public BranchServiceImpl(BranchRepository branchRepository, LocationService locationService, BankMapper bankMapper, HeadquartersRepository headquartersRepository) {
+    public BranchServiceImpl(BranchRepository branchRepository, BankMapper bankMapper, HeadquartersRepository headquartersRepository) {
         this.branchRepository = branchRepository;
-        this.locationService = locationService;
         this.bankMapper = bankMapper;
         this.headquartersRepository = headquartersRepository;
     }
@@ -46,8 +44,6 @@ public class BranchServiceImpl implements BranchService {
 
         try {
             Branch branch = bankMapper.toBranchEntity(branchDTO);
-            Location location = locationService.findOrCreateLocation(branch.getLocation());
-            branch.setLocation(location);
             branchRepository.save(branch);
         } catch (PersistenceException e) {
             throw new InvalidBranchException("Database error encountered when adding branch with SWIFT code: " + swiftCode);
