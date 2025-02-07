@@ -16,9 +16,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "headquarters", schema = "public", indexes = {
-        @Index(name = "idx_headquarters_locations", columnList = "location_id")
-})
+@Table(name = "headquarters", schema = "public")
 public class Headquarters {
     @Id
     @Column(name = "swift_code", nullable = false, length = 11)

@@ -16,9 +16,7 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "locations", schema = "public", indexes = {
-        @Index(name = "idx_locations_countries", columnList = "iso2_code")
-})
+@Table(name = "locations", schema = "public")
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

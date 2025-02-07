@@ -13,10 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "branches", schema = "public", indexes = {
-        @Index(name = "idx_branches_headquarters", columnList = "hq_swift_code"),
-        @Index(name = "idx_branches_locations", columnList = "location_id")
-})
+@Table(name = "branches", schema = "public")
 public class Branch {
     @Id
     @Column(name = "swift_code", nullable = false, length = 11)
