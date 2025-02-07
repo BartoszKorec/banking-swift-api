@@ -1,0 +1,28 @@
+services:
+  app:
+    image: 'docker.io/library/banking-swift-service:1.0.0'
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/banking_swift_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+    depends_on:
+      - db
+    volumes:
+      - "./Interns_2025_SWIFT_CODES - Sheet1.tsv:/app/data.tsv:ro"
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: banking_swift_db
+    volumes:
+      # Mount your schema file into the container so that Postgres initializes the DB.
+      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+      # Persist Postgres data between restarts.
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
