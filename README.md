@@ -47,12 +47,14 @@ Banking SWIFT Service provides a RESTful API built using Spring Boot (Java) that
 
 **DELETE**: `/v1/swift-codes/{swift-code}`
 
-## Getting Started
+# Getting Started
 
 Follow these steps to set up, run, and test the project.
 
 ## Prerequisites
 
+- **Java:** Ensure Java 17+ is installed and configured on your machine.  
+  [Get Java 17+](https://www.oracle.com/java/technologies/downloads/)
 - **Docker:** Ensure Docker is installed and running on your machine.  
   [Get Docker](https://docs.docker.com/get-docker/)
 - No additional software is required on your host.
@@ -62,14 +64,16 @@ Follow these steps to set up, run, and test the project.
 If you don't have Git installed, you can download the entire project as a ZIP file from the root of this repository:
 
 - [banking-swift-service.zip](banking-swift-service.zip)
+- **Path Constraint:** Ensure that the absolute path to the project does not contain any country-specific letters (e.g., letters with diacritics) to avoid potential issues.
 
 ### 1. Build the Docker Image
 
 Use the Maven Wrapper to build the Docker image via Spring Boot Buildpacks:
 
 ```console
-./mvnw spring:boot:build-image
+./mvnw org.springframework.boot:spring-boot-maven-plugin:build-image -DskipTests
 ```
+
 ### 2. Run the Containers
 
 To start the containers, use the following command:
@@ -86,7 +90,7 @@ To stop the running containers, use the following command:
 docker-compose down
 ```
 
-### 4. Run Tests
+## Running Tests
 
 To run unit tests, use the following command:
 
