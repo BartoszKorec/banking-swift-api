@@ -76,7 +76,8 @@ cd banking-swift-api
 
 ### 1. Build the Docker Image
 
-Use the Maven Wrapper to build the Docker image via Spring Boot Buildpacks:
+- Make sure that Docker Engine is running on your machine.
+- Use the Maven Wrapper to build the Docker image via Spring Boot Buildpacks:
 
 ```console
 ./mvnw org.springframework.boot:spring-boot-maven-plugin:build-image -DskipTests
@@ -100,6 +101,7 @@ docker-compose down
 
 ## Running Tests
 
+- Make sure that Docker Engine is running on your machine (Testcontainers require up and running Docker Engine, otherwise tests will fail).
 To run unit tests, use the following command:
 
 ```console

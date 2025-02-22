@@ -1,6 +1,6 @@
 services:
   app:
-    image: 'docker.io/library/banking-swift-service:1.0.0'
+    image: 'docker.io/bartoszkorec/banking-swift-service:v1'
     ports:
       - "8080:8080"
     environment:
