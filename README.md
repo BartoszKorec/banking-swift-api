@@ -20,17 +20,17 @@ Banking SWIFT Service provides a RESTful API built using Spring Boot (Java) that
 
 ### Retrieve details of a single SWIFT code
 
-**GET**: `/v1/swift-codes/{swift-code}`
+- **GET**: `/v1/swift-codes/{swift-code}`
 
 ### Return all SWIFT codes with details for a specific country
 
-**GET**: `/v1/swift-codes/country/{countryISO2code}`
+- **GET**: `/v1/swift-codes/country/{countryISO2code}`
 
 ###  Adds new SWIFT code entries to the database for a specific country
 
-**POST**: `/v1/swift-codes`
+- **POST**: `/v1/swift-codes`
 
-#### Request Structure:
+- #### Request Structure:
 
 ```json
 {
@@ -38,14 +38,14 @@ Banking SWIFT Service provides a RESTful API built using Spring Boot (Java) that
     "bankName": "string",
     "countryISO2": "string",
     "countryName": "string",
-    "isHeadquarter": "bool",
+    "isHeadquarters": "bool",
     "swiftCode": "string"
 }
 ```
 
 ### Deletes swift-code data if swiftCode matches the one in the database
 
-**DELETE**: `/v1/swift-codes/{swift-code}`
+- **DELETE**: `/v1/swift-codes/{swift-code}`
 
 # Getting Started
 
@@ -57,12 +57,14 @@ Follow these steps to set up, run, and test the project.
   [Get Java 17+](https://www.oracle.com/java/technologies/downloads/)
 - **Docker:** Ensure Docker is installed and running on your machine.  
   [Get Docker](https://docs.docker.com/get-docker/)
+- **Git (optional):** If you prefer to clone the repository using Git.  
+  [Get Git](https://git-scm.com/downloads)
 - No additional software is required on your host.
 
 ## Download the Project
 
 - **Path Constraint:** Ensure that the absolute path to the project does not contain any country-specific letters (e.g., letters with diacritics) to avoid potential issues.
-- If you don't have Git installed, you can download the entire project as a ZIP file.
+- Clone the project from GitHub (If you don't have Git installed, you can download the entire project as a ZIP file).
 
 ```console
 git clone https://github.com/BartoszKorec/banking-swift-api.git
@@ -85,7 +87,7 @@ cd banking-swift-api
 
 ### 2. Run the Containers
 
-To start the containers, use the following command:
+- To start the containers, use the following command:
 
 ```console
 docker-compose up -d
@@ -93,7 +95,7 @@ docker-compose up -d
 
 ### 3. Stop the Containers
 
-To stop the running containers, use the following command:
+- To stop the running containers, use the following command:
 
 ```console
 docker-compose down
@@ -102,13 +104,13 @@ docker-compose down
 ## Running Tests
 
 - Make sure that Docker Engine is running on your machine (Testcontainers require up and running Docker Engine, otherwise tests will fail).
-To run unit tests, use the following command:
+- To run unit tests, use the following command:
 
 ```console
 ./mvnw test
 ```
 
-To run both unit and integration tests, use the following command:
+- To run both unit and integration tests, use the following command:
 
 ```console
 ./mvnw verify
@@ -116,9 +118,9 @@ To run both unit and integration tests, use the following command:
 
 ### Code Coverage
 
-To check the code coverage, first run **`./mvnw verify`**. After that, open the following file in your browser:
+- To check the code coverage, first run **`./mvnw verify`**. After that, open the following file in your browser:
 
-**`target/site/jacoco/index.html`**
+  **`target/site/jacoco/index.html`**
 
 ## Acknowledgments
 
