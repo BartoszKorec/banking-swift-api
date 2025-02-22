@@ -61,10 +61,18 @@ Follow these steps to set up, run, and test the project.
 
 ## Download the Project
 
-If you don't have Git installed, you can download the entire project as a ZIP file from the root of this repository:
-
-- [banking-swift-service.zip](banking-swift-service.zip)
 - **Path Constraint:** Ensure that the absolute path to the project does not contain any country-specific letters (e.g., letters with diacritics) to avoid potential issues.
+- If you don't have Git installed, you can download the entire project as a ZIP file.
+
+```console
+git clone https://github.com/BartoszKorec/banking-swift-api.git
+```
+
+- go to the project directory
+
+```console
+cd banking-swift-api
+```
 
 ### 1. Build the Docker Image
 
@@ -103,3 +111,13 @@ To run both unit and integration tests, use the following command:
 ```console
 ./mvnw verify
 ```
+
+### Code Coverage
+
+To check the code coverage, first run **`./mvnw verify`**. After that, open the following file in your browser:
+
+**`target/site/jacoco/index.html`**
+
+## Acknowledgments
+
+This project was developed as part of a recruitment exercise for **Remitly Poland**. The exercise description and accompanying TSV file (containing SWIFT code data) were provided by Remitly Poland. All rights to the original exercise materials remain with Remitly Poland, and they were used solely for demonstrating the application.
